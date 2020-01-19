@@ -1,0 +1,19 @@
+# Mac OS
+.DS_Store
+
+# Maven
+target/
+.mvn
+
+# Java
+*.class
+*.log
+
+# STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
