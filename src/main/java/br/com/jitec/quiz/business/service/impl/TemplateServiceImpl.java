@@ -50,7 +50,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public TemplateDto activateTemplate(String templateUid) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid));
+		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid), "Template");
 		StatusTemplate newStatus = StatusTemplate.ACTIVE;
 		checkStatusChange(template, StatusTemplate.PENDING, newStatus);
 		template.setStatus(newStatus);
@@ -61,7 +61,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public TemplateDto inactivateTemplate(String templateUid) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid));
+		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid), "Template");
 		StatusTemplate newStatus = StatusTemplate.INACTIVE;
 		checkStatusChange(template, StatusTemplate.ACTIVE, newStatus);
 		template.setStatus(newStatus);
@@ -72,14 +72,14 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public TemplateDto getTemplate(String uid) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid));
+		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid), "Template");
 		TemplateDto map = ObjectMapper.map(template, TemplateDto.class);
 		return map;
 	}
 
 	@Override
 	public TemplateDto updateTemplate(String uid, TemplateDto templateDto) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid));
+		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid), "Template");
 		template.setDescription(templateDto.getDescription());
 
 		Template updatedTemplate = templateRepository.save(template);
@@ -88,14 +88,14 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public void deleteTemplate(String uid) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid));
+		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid), "Template");
 
 		templateRepository.delete(template);
 	}
 
 	@Override
 	public QuestionDto saveQuestion(String templateUid, QuestionDto questionDto) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid));
+		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid), "Template");
 		
 		Question question = ObjectMapper.map(questionDto, Question.class);
 		question.setTemplate(template);
@@ -108,7 +108,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public QuestionDto updateQuestion(String templateUid, String questionUid, QuestionDto questionDto) {
-		Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(questionUid));
+		Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(questionUid), "Question");
 		checkMatchTemplateUidQuestionUid(templateUid, question);
 		
 		question.setDescription(questionDto.getDescription());
@@ -119,7 +119,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public void deleteQuestion(String templateUid, String questionUid) {
-		Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(questionUid));
+		Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(questionUid), "Question");
 		checkMatchTemplateUidQuestionUid(templateUid, question);
 
 		questionRepository.delete(question);

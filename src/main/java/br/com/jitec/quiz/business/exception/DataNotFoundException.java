@@ -8,9 +8,5 @@ public class DataNotFoundException  extends RuntimeException {
 		super(message);
 	}
 
-	public DataNotFoundException() {
-		super("The resource you were trying to reach was not found");
-	}
-
 }
 

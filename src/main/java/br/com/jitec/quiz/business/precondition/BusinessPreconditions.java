@@ -7,12 +7,15 @@ public class BusinessPreconditions {
 	/**
 	 * Check if some value was found, otherwise throw exception.
 	 * 
-	 * @param expression has value true if found, otherwise false
-	 * @throws DataNotFoundException if expression is false, means value not found.
+	 * @param resource     resource to be evaluated whether it is null or not
+	 * @param resourceName the name that will appear in the exception message when
+	 *                     the resource is null
+	 * @throws DataNotFoundException if resource is null, means value not found.
 	 */
-	public static <T> T checkFound(final T resource) {
+	public static <T> T checkFound(final T resource, final String resourceName) {
 		if (resource == null) {
-			throw new DataNotFoundException();
+			throw new DataNotFoundException(
+					"The " + resourceName + " you were trying to reach was not found");
 		}
 
 		return resource;
