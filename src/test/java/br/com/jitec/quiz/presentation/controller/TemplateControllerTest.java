@@ -66,6 +66,28 @@ class TemplateControllerTest {
 	}
 
 	@Test
+	void testActivateTemplate() {
+		TemplateDto template = new TemplateDto.Builder().withUid("template-uid").withStatus("ACTIVE").build();
+		Mockito.when(templateService.activateTemplate("template-uid")).thenReturn(template);
+
+		ResponseEntity<TemplateResponse> result = templateController.activateTemplate("template-uid");
+
+		Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+		Assertions.assertEquals("ACTIVE", result.getBody().getStatus());
+	}
+
+	@Test
+	void testInactivateTemplate() {
+		TemplateDto template = new TemplateDto.Builder().withUid("template-uid").withStatus("INACTIVE").build();
+		Mockito.when(templateService.inactivateTemplate("template-uid")).thenReturn(template);
+
+		ResponseEntity<TemplateResponse> result = templateController.inactivateTemplate("template-uid");
+
+		Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+		Assertions.assertEquals("INACTIVE", result.getBody().getStatus());
+	}
+
+	@Test
 	void testGetTemplate() {
 		TemplateDto template = new TemplateDto.Builder().withDescription("description").withUid("template-uid").build();
 		Mockito.when(templateService.getTemplate("template-uid")).thenReturn(template);

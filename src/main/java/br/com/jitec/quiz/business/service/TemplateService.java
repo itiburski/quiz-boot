@@ -22,5 +22,9 @@ public interface TemplateService {
 	QuestionDto updateQuestion(String templateUid, String questionUid, QuestionDto questionDto);
 
 	void deleteQuestion(String templateUid, String questionUid);
+
+	TemplateDto activateTemplate(String templateUid);
+
+	TemplateDto inactivateTemplate(String templateUid);
 	
 }

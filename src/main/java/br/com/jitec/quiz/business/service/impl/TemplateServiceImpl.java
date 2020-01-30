@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 
 import br.com.jitec.quiz.business.dto.QuestionDto;
 import br.com.jitec.quiz.business.dto.TemplateDto;
+import br.com.jitec.quiz.business.exception.BusinessValidationException;
 import br.com.jitec.quiz.business.exception.DataNotFoundException;
 import br.com.jitec.quiz.business.mapper.ObjectMapper;
 import br.com.jitec.quiz.business.precondition.BusinessPreconditions;
 import br.com.jitec.quiz.business.service.TemplateService;
 import br.com.jitec.quiz.data.entity.Question;
+import br.com.jitec.quiz.data.entity.StatusTemplate;
 import br.com.jitec.quiz.data.entity.Template;
 import br.com.jitec.quiz.data.repo.QuestionRepository;
 import br.com.jitec.quiz.data.repo.TemplateRepository;
@@ -38,11 +40,34 @@ public class TemplateServiceImpl implements TemplateService {
 	public TemplateDto saveTemplate(TemplateDto templateDto) {
 		Template template = ObjectMapper.map(templateDto, Template.class);
 		template.setUid(UUID.randomUUID().toString());
+		template.setStatus(StatusTemplate.PENDING);
 		
 		Template savedTemplate = templateRepository.save(template);
 		
 		TemplateDto returnTemplate = ObjectMapper.map(savedTemplate, TemplateDto.class);
 		return returnTemplate;
+	}
+
+	@Override
+	public TemplateDto activateTemplate(String templateUid) {
+		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid));
+		StatusTemplate newStatus = StatusTemplate.ACTIVE;
+		checkStatusChange(template, StatusTemplate.PENDING, newStatus);
+		template.setStatus(newStatus);
+		Template updatedTemplate = templateRepository.save(template);
+
+		return ObjectMapper.map(updatedTemplate, TemplateDto.class);
+	}
+
+	@Override
+	public TemplateDto inactivateTemplate(String templateUid) {
+		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid));
+		StatusTemplate newStatus = StatusTemplate.INACTIVE;
+		checkStatusChange(template, StatusTemplate.ACTIVE, newStatus);
+		template.setStatus(newStatus);
+		Template updatedTemplate = templateRepository.save(template);
+
+		return ObjectMapper.map(updatedTemplate, TemplateDto.class);
 	}
 
 	@Override
@@ -103,6 +128,13 @@ public class TemplateServiceImpl implements TemplateService {
 	private void checkMatchTemplateUidQuestionUid(String templateUid, Question question) {
 		if (!question.getTemplate().getUid().equals(templateUid)) {
 			throw new DataNotFoundException("The questionUid does not belong to the templateUid");
+		}
+	}
+
+	private void checkStatusChange(Template template, StatusTemplate desiredStatus, StatusTemplate nextStatus) {
+		if (!desiredStatus.equals(template.getStatus())) {
+			throw new BusinessValidationException(
+					"Not allowed to change template status from " + template.getStatus() + " to " + nextStatus);
 		}
 	}
 

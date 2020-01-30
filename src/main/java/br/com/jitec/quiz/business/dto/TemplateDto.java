@@ -6,6 +6,7 @@ public class TemplateDto {
 
 	private String uid;
 	private String description;
+	private String status;
 	private List<QuestionDto> questions;
 
 	public String getUid() {
@@ -22,6 +23,14 @@ public class TemplateDto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public List<QuestionDto> getQuestions() {
@@ -46,6 +55,11 @@ public class TemplateDto {
 
 		public Builder withDescription(String description) {
 			instance.setDescription(description);
+			return this;
+		}
+
+		public Builder withStatus(String status) {
+			instance.setStatus(status);
 			return this;
 		}
 

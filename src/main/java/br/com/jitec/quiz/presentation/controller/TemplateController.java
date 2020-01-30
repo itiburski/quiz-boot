@@ -61,6 +61,28 @@ public class TemplateController {
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 
+	@ApiOperation(value = "Activate a template", notes = "An active template can be used to create a quiz", code = 200)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return template with status changed") })
+	@PostMapping(path = "/{templateUid}/activate", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<TemplateResponse> activateTemplate(
+			@ApiParam("templateUid for the template to be activated") @PathVariable String templateUid) {
+
+		TemplateDto template = templateService.activateTemplate(templateUid);
+		TemplateResponse response = ObjectMapper.map(template, TemplateResponse.class);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "Inctivate a template", notes = "An inactive template cannot be used to create a quiz", code = 200)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return template with status changed") })
+	@PostMapping(path = "/{templateUid}/inactivate", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<TemplateResponse> inactivateTemplate(
+			@ApiParam("templateUid for the template to be inactivated") @PathVariable String templateUid) {
+
+		TemplateDto template = templateService.inactivateTemplate(templateUid);
+		TemplateResponse response = ObjectMapper.map(template, TemplateResponse.class);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 	@ApiOperation(value = "Gets a Template with the specified templateUid")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return the Template with the specified templateUid") })
 	@GetMapping(path = "/{templateUid}", produces = MediaType.APPLICATION_JSON_VALUE)

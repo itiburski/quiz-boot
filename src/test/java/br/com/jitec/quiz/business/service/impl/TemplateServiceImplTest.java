@@ -13,8 +13,10 @@ import org.mockito.MockitoAnnotations;
 
 import br.com.jitec.quiz.business.dto.QuestionDto;
 import br.com.jitec.quiz.business.dto.TemplateDto;
+import br.com.jitec.quiz.business.exception.BusinessValidationException;
 import br.com.jitec.quiz.business.exception.DataNotFoundException;
 import br.com.jitec.quiz.data.entity.Question;
+import br.com.jitec.quiz.data.entity.StatusTemplate;
 import br.com.jitec.quiz.data.entity.Template;
 import br.com.jitec.quiz.data.repo.QuestionRepository;
 import br.com.jitec.quiz.data.repo.TemplateRepository;
@@ -58,6 +60,64 @@ class TemplateServiceImplTest {
 		TemplateDto result = templateService.saveTemplate(templateDto);
 
 		Assertions.assertNotNull(result);
+	}
+
+	@Test
+	void testActivateTemplate() {
+		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.PENDING).build();
+		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
+
+		TemplateDto result = templateService.activateTemplate("template-uid");
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("ACTIVE", result.getStatus());
+	}
+
+	@Test
+	void testActivateTemplateWithTemplateUidNotFound() {
+		Mockito.when(templateRepository.findByUid("unexistent-template-uid")).thenReturn(null);
+
+		Assertions.assertThrows(DataNotFoundException.class, () -> templateService.activateTemplate("template-uid"));
+	}
+
+	@Test
+	void testActivateTemplateWithIncompatibleCurrentStatus() {
+		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.ACTIVE).build();
+		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
+
+		Assertions.assertThrows(BusinessValidationException.class,
+				() -> templateService.activateTemplate("template-uid"));
+	}
+
+	@Test
+	void testInactivateTemplate() {
+		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.ACTIVE).build();
+		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
+
+		TemplateDto result = templateService.inactivateTemplate("template-uid");
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("INACTIVE", result.getStatus());
+	}
+
+	@Test
+	void testInactivateTemplateWithTemplateUidNotFound() {
+		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(null);
+
+		Assertions.assertThrows(DataNotFoundException.class, () -> templateService.inactivateTemplate("template-uid"));
+	}
+
+	@Test
+	void testInactivateTemplateWithIncompatibleCurrentStatus() {
+		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.INACTIVE).build();
+		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
+
+		Assertions.assertThrows(BusinessValidationException.class,
+				() -> templateService.inactivateTemplate("template-uid"));
 	}
 
 	@Test

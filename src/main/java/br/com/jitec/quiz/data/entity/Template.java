@@ -27,6 +27,8 @@ public class Template {
 	@OneToMany(mappedBy = "template", cascade = CascadeType.ALL)
 	private List<Question> questions;
 
+	private StatusTemplate status;
+
 	public Template() {
 		this.questions = new ArrayList<>();
 	}
@@ -55,6 +57,14 @@ public class Template {
 		this.description = description;
 	}
 
+	public StatusTemplate getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusTemplate status) {
+		this.status = status;
+	}
+
 	public static class Builder {
 		private Template instance;
 
@@ -74,6 +84,11 @@ public class Template {
 
 		public Builder withDescription(String description) {
 			instance.setDescription(description);
+			return this;
+		}
+
+		public Builder withStatus(StatusTemplate status) {
+			instance.setStatus(status);
 			return this;
 		}
 

@@ -12,10 +12,11 @@ public class TemplateResponse {
 	@ApiModelProperty("Template description")
 	private String description;
 
+	@ApiModelProperty("Template status")
+	private String status;
+
 	@ApiModelProperty("All questions related to current template")
 	private List<QuestionResponse> questions;
-
-	// status??
 
 	public String getTemplateUid() {
 		return templateUid;
@@ -31,6 +32,14 @@ public class TemplateResponse {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public List<QuestionResponse> getQuestions() {
