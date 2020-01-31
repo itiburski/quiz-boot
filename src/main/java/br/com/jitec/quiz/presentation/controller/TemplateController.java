@@ -16,11 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jitec.quiz.business.dto.QuestionDto;
+import br.com.jitec.quiz.business.dto.QuizDto;
 import br.com.jitec.quiz.business.dto.TemplateDto;
 import br.com.jitec.quiz.business.mapper.ObjectMapper;
+import br.com.jitec.quiz.business.service.QuizService;
 import br.com.jitec.quiz.business.service.TemplateService;
 import br.com.jitec.quiz.presentation.payload.QuestionRequest;
 import br.com.jitec.quiz.presentation.payload.QuestionResponse;
+import br.com.jitec.quiz.presentation.payload.QuizRequest;
+import br.com.jitec.quiz.presentation.payload.QuizResponse;
 import br.com.jitec.quiz.presentation.payload.TemplateRequest;
 import br.com.jitec.quiz.presentation.payload.TemplateResponse;
 import io.swagger.annotations.Api;
@@ -36,6 +40,9 @@ public class TemplateController {
 
 	@Autowired
 	private TemplateService templateService;
+
+	@Autowired
+	private QuizService quizService;
 
 	@ApiOperation(value = "Gets all templates")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return all templates") })
@@ -61,7 +68,7 @@ public class TemplateController {
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 
-	@ApiOperation(value = "Activate a template", notes = "An active template can be used to create a quiz", code = 200)
+	@ApiOperation(value = "Activate the specified templateUid template", notes = "An active template can be used to create a quiz", code = 200)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return template with status changed") })
 	@PostMapping(path = "/{templateUid}/activate", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TemplateResponse> activateTemplate(
@@ -72,7 +79,7 @@ public class TemplateController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Inctivate a template", notes = "An inactive template cannot be used to create a quiz", code = 200)
+	@ApiOperation(value = "Inctivate the specified templateUid template", notes = "An inactive template cannot be used to create a quiz", code = 200)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return template with status changed") })
 	@PostMapping(path = "/{templateUid}/inactivate", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TemplateResponse> inactivateTemplate(
@@ -115,6 +122,19 @@ public class TemplateController {
 
 		templateService.deleteTemplate(templateUid);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	@ApiOperation(value = "Creates a new quiz based on the specified templateUid", code = 201)
+	@ApiResponses(value = { @ApiResponse(code = 201, message = "Return created quiz") })
+	@PostMapping(path = "/{templateUid}/quizzes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<QuizResponse> postQuiz(@PathVariable String templateUid,
+			@RequestBody QuizRequest quizRequest) {
+
+		QuizDto quizDto = ObjectMapper.map(quizRequest, QuizDto.class);
+		QuizDto savedQuiz = quizService.saveQuiz(templateUid, quizDto);
+
+		QuizResponse response = ObjectMapper.map(savedQuiz, QuizResponse.class);
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 
 	@ApiOperation(value = "Creates a new Question, that is related to specified templateUid template")

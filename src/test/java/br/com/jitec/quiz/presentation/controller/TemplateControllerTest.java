@@ -1,5 +1,7 @@
 package br.com.jitec.quiz.presentation.controller;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import br.com.jitec.quiz.business.dto.QuestionDto;
+import br.com.jitec.quiz.business.dto.QuizDto;
 import br.com.jitec.quiz.business.dto.TemplateDto;
+import br.com.jitec.quiz.business.service.QuizService;
 import br.com.jitec.quiz.business.service.TemplateService;
 import br.com.jitec.quiz.presentation.payload.QuestionRequest;
 import br.com.jitec.quiz.presentation.payload.QuestionResponse;
+import br.com.jitec.quiz.presentation.payload.QuizRequest;
+import br.com.jitec.quiz.presentation.payload.QuizResponse;
 import br.com.jitec.quiz.presentation.payload.TemplateRequest;
 import br.com.jitec.quiz.presentation.payload.TemplateResponse;
 
@@ -28,6 +34,9 @@ class TemplateControllerTest {
 
 	@Mock
 	private TemplateService templateService;
+
+	@Mock
+	private QuizService quizService;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -119,6 +128,27 @@ class TemplateControllerTest {
 
 		Assertions.assertEquals(HttpStatus.NO_CONTENT.value(), result.getStatusCodeValue());
 		Mockito.verify(templateService).deleteTemplate("template-uid");
+	}
+
+	@Test
+	void testPostQuiz() {
+		LocalDateTime dtBegin = LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0);
+		LocalDateTime dtEnd = LocalDateTime.of(2020, Month.FEBRUARY, 4, 23, 59, 59);
+		QuizDto quizDtoMock = new QuizDto.Builder().withDescription("description").withQuizUid("quiz-uid")
+				.withBegin(dtBegin).withEnd(dtEnd).withStatus("PENDING").build();
+		Mockito.when(quizService.saveQuiz(Mockito.eq("template-uid"), Mockito.any(QuizDto.class)))
+				.thenReturn(quizDtoMock);
+
+		QuizRequest quizRequest = new QuizRequest.Builder().build();
+		ResponseEntity<QuizResponse> result = templateController.postQuiz("template-uid", quizRequest);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(HttpStatus.CREATED, result.getStatusCode());
+		Assertions.assertEquals("quiz-uid", result.getBody().getQuizUid());
+		Assertions.assertEquals("description", result.getBody().getDescription());
+		Assertions.assertEquals("PENDING", result.getBody().getStatus());
+		Assertions.assertEquals(dtBegin, result.getBody().getBegin());
+		Assertions.assertEquals(dtEnd, result.getBody().getEnd());
 	}
 
 	@Test

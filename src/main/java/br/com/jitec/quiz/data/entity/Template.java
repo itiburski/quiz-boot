@@ -6,12 +6,16 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-@Entity(name = "templates")
+@Entity
+@Table(name = "templates")
 public class Template {
 
 	@Id
@@ -27,7 +31,11 @@ public class Template {
 	@OneToMany(mappedBy = "template", cascade = CascadeType.ALL)
 	private List<Question> questions;
 
+	@Enumerated
 	private StatusTemplate status;
+
+	@OneToMany(mappedBy = "template", fetch = FetchType.LAZY)
+	private List<Quiz> quizzes;
 
 	public Template() {
 		this.questions = new ArrayList<>();
