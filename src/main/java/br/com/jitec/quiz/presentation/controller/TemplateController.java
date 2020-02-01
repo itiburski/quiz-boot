@@ -25,6 +25,7 @@ import br.com.jitec.quiz.presentation.payload.QuestionRequest;
 import br.com.jitec.quiz.presentation.payload.QuestionResponse;
 import br.com.jitec.quiz.presentation.payload.QuizRequest;
 import br.com.jitec.quiz.presentation.payload.QuizResponse;
+import br.com.jitec.quiz.presentation.payload.SimpleTemplateResponse;
 import br.com.jitec.quiz.presentation.payload.TemplateRequest;
 import br.com.jitec.quiz.presentation.payload.TemplateResponse;
 import io.swagger.annotations.Api;
@@ -47,10 +48,10 @@ public class TemplateController {
 	@ApiOperation(value = "Gets all templates")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return all templates") })
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
-	public List<TemplateResponse> getTemplates() {
+	public List<SimpleTemplateResponse> getTemplates() {
 
 		List<TemplateDto> templates = templateService.getTemplates();
-		return ObjectMapper.mapAll(templates, TemplateResponse.class);
+		return ObjectMapper.mapAll(templates, SimpleTemplateResponse.class);
 	}
 
 	@ApiOperation(value = "Creates a new template", code = 201)

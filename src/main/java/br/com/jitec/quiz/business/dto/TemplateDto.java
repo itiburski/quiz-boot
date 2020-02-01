@@ -63,6 +63,11 @@ public class TemplateDto {
 			return this;
 		}
 
+		public Builder withQuestions(List<QuestionDto> questions) {
+			instance.setQuestions(questions);
+			return this;
+		}
+
 		public TemplateDto build() {
 			return instance;
 		}
