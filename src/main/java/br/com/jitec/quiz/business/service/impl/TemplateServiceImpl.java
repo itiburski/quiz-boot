@@ -80,8 +80,9 @@ public class TemplateServiceImpl implements TemplateService {
 	@Override
 	public TemplateDto updateTemplate(String uid, TemplateDto templateDto) {
 		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid), "Template");
-		template.setDescription(templateDto.getDescription());
+		checkTemplatePending(template);
 
+		template.setDescription(templateDto.getDescription());
 		Template updatedTemplate = templateRepository.save(template);
 		return ObjectMapper.map(updatedTemplate, TemplateDto.class);
 	}
@@ -89,6 +90,7 @@ public class TemplateServiceImpl implements TemplateService {
 	@Override
 	public void deleteTemplate(String uid) {
 		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid), "Template");
+		checkTemplatePending(template);
 
 		templateRepository.delete(template);
 	}
@@ -96,7 +98,8 @@ public class TemplateServiceImpl implements TemplateService {
 	@Override
 	public QuestionDto saveQuestion(String templateUid, QuestionDto questionDto) {
 		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid), "Template");
-		
+		checkTemplatePending(template);
+
 		Question question = ObjectMapper.map(questionDto, Question.class);
 		question.setTemplate(template);
 		question.setUid(UUID.randomUUID().toString());
@@ -109,6 +112,7 @@ public class TemplateServiceImpl implements TemplateService {
 	@Override
 	public QuestionDto updateQuestion(String templateUid, String questionUid, QuestionDto questionDto) {
 		Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(questionUid), "Question");
+		checkTemplatePending(question.getTemplate());
 		checkMatchTemplateUidQuestionUid(templateUid, question);
 		
 		question.setDescription(questionDto.getDescription());
@@ -120,6 +124,7 @@ public class TemplateServiceImpl implements TemplateService {
 	@Override
 	public void deleteQuestion(String templateUid, String questionUid) {
 		Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(questionUid), "Question");
+		checkTemplatePending(question.getTemplate());
 		checkMatchTemplateUidQuestionUid(templateUid, question);
 
 		questionRepository.delete(question);
@@ -135,6 +140,12 @@ public class TemplateServiceImpl implements TemplateService {
 		if (!desiredStatus.equals(template.getStatus())) {
 			throw new BusinessValidationException(
 					"Not allowed to change template status from " + template.getStatus() + " to " + nextStatus);
+		}
+	}
+
+	private void checkTemplatePending(Template template) {
+		if (!StatusTemplate.PENDING.equals(template.getStatus())) {
+			throw new BusinessValidationException("Template is not PENDING. Not allowed to modify it.");
 		}
 	}
 
