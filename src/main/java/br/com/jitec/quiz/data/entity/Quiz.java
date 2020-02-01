@@ -1,7 +1,9 @@
 package br.com.jitec.quiz.data.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,8 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-@Entity(name = "quizzes")
+@Entity
+@Table(name = "quizzes")
 public class Quiz {
 
 	@Id
@@ -34,6 +39,9 @@ public class Quiz {
 	@ManyToOne
 	@JoinColumn(name = "template_id")
 	private Template template;
+
+	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
+	private List<Answer> answers;
 
 	public Long getId() {
 		return id;
@@ -89,6 +97,14 @@ public class Quiz {
 
 	public void setStatus(StatusQuiz status) {
 		this.status = status;
+	}
+
+	public List<Answer> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(List<Answer> answers) {
+		this.answers = answers;
 	}
 
 	public static class Builder {

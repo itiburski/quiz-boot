@@ -7,8 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "questions")
 public class Question {
 
 	@Id
@@ -24,6 +26,9 @@ public class Question {
 	@ManyToOne
 	@JoinColumn(name = "template_id")
 	private Template template;
+
+//	@OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+//	private List<AnswerChoice> answerChoice;
 
 	public Long getId() {
 		return id;
@@ -56,6 +61,14 @@ public class Question {
 	public void setTemplate(Template template) {
 		this.template = template;
 	}
+
+//	public List<AnswerChoice> getAnswerChoice() {
+//		return answerChoice;
+//	}
+//
+//	public void setAnswerChoice(List<AnswerChoice> answerChoice) {
+//		this.answerChoice = answerChoice;
+//	}
 
 	public static class Builder {
 		private Question instance;
