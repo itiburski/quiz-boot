@@ -13,9 +13,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
 import br.com.jitec.quiz.business.exception.BusinessValidationException;
 import br.com.jitec.quiz.business.exception.DataNotFoundException;
+import br.com.jitec.quiz.data.entity.Question;
 import br.com.jitec.quiz.data.entity.Quiz;
 import br.com.jitec.quiz.data.entity.StatusQuiz;
 import br.com.jitec.quiz.data.entity.StatusTemplate;
@@ -181,6 +183,36 @@ class QuizServiceImplTest {
 		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getQuiz("quiz-uid"));
+	}
+
+	@Test
+	void testGetQuizComplete() {
+		List<Question> questions = new ArrayList<>();
+		questions.add(new Question.Builder().withUid("quest-uid-1").withDescription("desc-1").build());
+		questions.add(new Question.Builder().withUid("quest-uid-2").withDescription("desc-2").build());
+		Template template = new Template.Builder().withDescription("template-description").withQuestions(questions)
+				.build();
+		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
+				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).withTemplate(template).build();
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+
+		QuizCompleteDto result = quizService.getQuizComplete("quiz-uid");
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("quiz-uid", result.getQuizUid());
+		Assertions.assertEquals("description", result.getDescription());
+		Assertions.assertEquals(StatusQuiz.ACTIVE.toString(), result.getStatus());
+		Assertions.assertEquals(dtBegin, result.getBegin());
+		Assertions.assertEquals(dtEnd, result.getEnd());
+		Assertions.assertEquals(2, result.getQuestions().size());
+		Assertions.assertEquals(4, result.getChoices().size());
+	}
+
+	@Test
+	void testGetQuizComplete_WithQuizUidNotFound() {
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+
+		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getQuizComplete("quiz-uid"));
 	}
 
 	@Test

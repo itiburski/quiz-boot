@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
 import br.com.jitec.quiz.business.mapper.ObjectMapper;
 import br.com.jitec.quiz.business.service.QuizService;
+import br.com.jitec.quiz.presentation.payload.QuizCompleteResponse;
 import br.com.jitec.quiz.presentation.payload.QuizRequest;
 import br.com.jitec.quiz.presentation.payload.QuizResponse;
 import io.swagger.annotations.Api;
@@ -50,6 +52,17 @@ public class QuizController {
 		QuizDto quizDto = quizService.getQuiz(quizUid);
 
 		QuizResponse response = ObjectMapper.map(quizDto, QuizResponse.class);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "Gets a Quiz with the specified quizUid, including the answers and the possible choices")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return the Quiz with the specified quizUid") })
+	@GetMapping(path = "/{quizUid}/complete", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<QuizCompleteResponse> getQuizComplete(@PathVariable String quizUid) {
+
+		QuizCompleteDto quizDto = quizService.getQuizComplete(quizUid);
+
+		QuizCompleteResponse response = ObjectMapper.map(quizDto, QuizCompleteResponse.class);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

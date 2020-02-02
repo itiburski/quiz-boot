@@ -2,6 +2,7 @@ package br.com.jitec.quiz.business.service;
 
 import java.util.List;
 
+import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
 
 public interface QuizService {
@@ -15,6 +16,8 @@ public interface QuizService {
 	QuizDto endQuiz(String quizUid);
 
 	QuizDto getQuiz(String quizUid);
+
+	QuizCompleteDto getQuizComplete(String quizUid);
 
 	QuizDto updateQuiz(String quizUid, QuizDto quizDto);
 

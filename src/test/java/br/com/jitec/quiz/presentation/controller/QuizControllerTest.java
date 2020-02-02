@@ -15,8 +15,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
 import br.com.jitec.quiz.business.service.QuizService;
+import br.com.jitec.quiz.presentation.payload.QuizCompleteResponse;
 import br.com.jitec.quiz.presentation.payload.QuizRequest;
 import br.com.jitec.quiz.presentation.payload.QuizResponse;
 
@@ -70,6 +72,25 @@ class QuizControllerTest {
 		Mockito.when(quizService.getQuiz("quiz-uid")).thenReturn(quizDtoMock);
 
 		ResponseEntity<QuizResponse> result = quizController.getQuiz("quiz-uid");
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+		Assertions.assertEquals("quiz-uid", result.getBody().getQuizUid());
+		Assertions.assertEquals("description", result.getBody().getDescription());
+		Assertions.assertEquals(dtBegin, result.getBody().getBegin());
+		Assertions.assertEquals(dtEnd, result.getBody().getEnd());
+		Assertions.assertEquals("PENDING", result.getBody().getStatus());
+	}
+
+	@Test
+	void testGetQuizComplete() {
+		LocalDateTime dtBegin = LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0);
+		LocalDateTime dtEnd = LocalDateTime.of(2020, Month.FEBRUARY, 5, 23, 59);
+		QuizCompleteDto quizDtoMock = new QuizCompleteDto.Builder().withQuizUid("quiz-uid").withDescription("description")
+				.withBegin(dtBegin).withEnd(dtEnd).withStatus("PENDING").build();
+		Mockito.when(quizService.getQuizComplete("quiz-uid")).thenReturn(quizDtoMock);
+
+		ResponseEntity<QuizCompleteResponse> result = quizController.getQuizComplete("quiz-uid");
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());

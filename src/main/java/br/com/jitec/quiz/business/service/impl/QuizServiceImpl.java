@@ -1,16 +1,22 @@
 package br.com.jitec.quiz.business.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.jitec.quiz.business.dto.ChoiceDto;
+import br.com.jitec.quiz.business.dto.QuestionDto;
+import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
 import br.com.jitec.quiz.business.exception.BusinessValidationException;
 import br.com.jitec.quiz.business.mapper.ObjectMapper;
 import br.com.jitec.quiz.business.precondition.BusinessPreconditions;
 import br.com.jitec.quiz.business.service.QuizService;
+import br.com.jitec.quiz.data.entity.Choices;
+import br.com.jitec.quiz.data.entity.Question;
 import br.com.jitec.quiz.data.entity.Quiz;
 import br.com.jitec.quiz.data.entity.StatusQuiz;
 import br.com.jitec.quiz.data.entity.Template;
@@ -78,6 +84,24 @@ public class QuizServiceImpl implements QuizService {
 	public QuizDto getQuiz(String quizUid) {
 		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
 		return ObjectMapper.map(quiz, QuizDto.class);
+	}
+
+	@Override
+	public QuizCompleteDto getQuizComplete(String quizUid) {
+		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		QuizCompleteDto quizDetailDto = ObjectMapper.map(quiz, QuizCompleteDto.class);
+		quizDetailDto.setQuestions(new ArrayList<>());
+		quizDetailDto.setChoices(new ArrayList<>());
+		
+		for (Question question : quiz.getTemplate().getQuestions()) {
+			quizDetailDto.getQuestions().add(ObjectMapper.map(question, QuestionDto.class));
+		}
+
+		for (Choices choice : Choices.values()) {
+			quizDetailDto.getChoices().add(new ChoiceDto(choice.toString(), choice.getDescription()));
+		}
+
+		return quizDetailDto;
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public class Template {
 	private List<Quiz> quizzes;
 
 	public Template() {
-		this.questions = new ArrayList<>();
+		this.setQuestions(new ArrayList<>());
 	}
 
 	public Long getId() {
@@ -73,6 +73,14 @@ public class Template {
 		this.status = status;
 	}
 
+	public List<Question> getQuestions() {
+		return questions;
+	}
+
+	public void setQuestions(List<Question> questions) {
+		this.questions = questions;
+	}
+
 	public static class Builder {
 		private Template instance;
 
@@ -97,6 +105,11 @@ public class Template {
 
 		public Builder withStatus(StatusTemplate status) {
 			instance.setStatus(status);
+			return this;
+		}
+
+		public Builder withQuestions(List<Question> questions) {
+			instance.setQuestions(questions);
 			return this;
 		}
 
