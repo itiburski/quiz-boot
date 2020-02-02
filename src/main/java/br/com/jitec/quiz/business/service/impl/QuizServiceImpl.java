@@ -106,9 +106,8 @@ public class QuizServiceImpl implements QuizService {
 
 	@Override
 	public QuizDto updateQuiz(String quizUid, QuizDto quizDto) {
-
 		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
-		checkNotEndedQuiz(quiz);
+		checkPendingQuiz(quiz);
 
 		quiz.setDescription(quizDto.getDescription());
 		quiz.setBegin(quizDto.getBegin());
@@ -122,14 +121,14 @@ public class QuizServiceImpl implements QuizService {
 	@Override
 	public void deleteQuiz(String quizUid) {
 		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
-		checkNotEndedQuiz(quiz);
+		checkPendingQuiz(quiz);
 
 		quizRepository.delete(quiz);
 	}
 
 	private void checkTemplateActive(Template template) {
 		if (template == null) {
-			throw new BusinessValidationException("Template is not active");
+			throw new BusinessValidationException("Template is not active. Not allowed to create a Quiz based on it.");
 		}
 	}
 
@@ -140,9 +139,9 @@ public class QuizServiceImpl implements QuizService {
 		}
 	}
 
-	private void checkNotEndedQuiz(Quiz quiz) {
-		if (StatusQuiz.ENDED.equals(quiz.getStatus())) {
-			throw new BusinessValidationException("Not allowed to update/delete an ENDED quiz");
+	private void checkPendingQuiz(Quiz quiz) {
+		if (!StatusQuiz.PENDING.equals(quiz.getStatus())) {
+			throw new BusinessValidationException("Quiz is not PENDING. Not allowed to modify it.");
 		}
 	}
 

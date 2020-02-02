@@ -218,7 +218,7 @@ class QuizServiceImplTest {
 	@Test
 	void testUpdateQuiz() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
-				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
+				.withStatus(StatusQuiz.PENDING).withBegin(dtBegin).withEnd(dtEnd).build();
 		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
 		Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
 
@@ -231,7 +231,7 @@ class QuizServiceImplTest {
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals("quiz-uid", result.getQuizUid());
 		Assertions.assertEquals("updated-description", result.getDescription());
-		Assertions.assertEquals(StatusQuiz.ACTIVE.toString(), result.getStatus());
+		Assertions.assertEquals(StatusQuiz.PENDING.toString(), result.getStatus());
 		Assertions.assertEquals(newBegin, result.getBegin());
 		Assertions.assertEquals(newEnd, result.getEnd());
 	}
@@ -245,7 +245,17 @@ class QuizServiceImplTest {
 	}
 
 	@Test
-	void testUpdateQuiz_WithIncompatibleCurrentStatus() {
+	void testUpdateQuiz_WithActiveStatus() {
+		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
+				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+
+		QuizDto quizDto = new QuizDto.Builder().build();
+		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.updateQuiz("quiz-uid", quizDto));
+	}
+
+	@Test
+	void testUpdateQuiz_WithEndedStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).build();
 		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
@@ -257,7 +267,7 @@ class QuizServiceImplTest {
 	@Test
 	void testDeleteQuiz() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
-				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
+				.withStatus(StatusQuiz.PENDING).withBegin(dtBegin).withEnd(dtEnd).build();
 		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
 
 		quizService.deleteQuiz("quiz-uid");
@@ -273,7 +283,16 @@ class QuizServiceImplTest {
 	}
 
 	@Test
-	void testDeleteQuiz_WithIncompatibleCurrentStatus() {
+	void testDeleteQuiz_WithActiveStatus() {
+		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
+				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+
+		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.deleteQuiz("quiz-uid"));
+	}
+
+	@Test
+	void testDeleteQuiz_WithEndedStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).build();
 		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
