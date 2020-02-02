@@ -1,8 +1,10 @@
 package br.com.jitec.quiz.presentation.payload;
 
+import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 
-public class SimpleTemplateResponse {
+public class TemplateCompleteResponse {
 
 	@ApiModelProperty("Generated Template UID")
 	private String templateUid;
@@ -12,6 +14,9 @@ public class SimpleTemplateResponse {
 
 	@ApiModelProperty("Template status")
 	private String status;
+
+	@ApiModelProperty("All questions related to current template")
+	private List<QuestionResponse> questions;
 
 	public String getTemplateUid() {
 		return templateUid;
@@ -35,6 +40,14 @@ public class SimpleTemplateResponse {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public List<QuestionResponse> getQuestions() {
+		return questions;
+	}
+
+	public void setQuestions(List<QuestionResponse> questions) {
+		this.questions = questions;
 	}
 
 }

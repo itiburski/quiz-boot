@@ -24,7 +24,7 @@ import br.com.jitec.quiz.presentation.payload.QuestionRequest;
 import br.com.jitec.quiz.presentation.payload.QuestionResponse;
 import br.com.jitec.quiz.presentation.payload.QuizRequest;
 import br.com.jitec.quiz.presentation.payload.QuizResponse;
-import br.com.jitec.quiz.presentation.payload.SimpleTemplateResponse;
+import br.com.jitec.quiz.presentation.payload.TemplateCompleteResponse;
 import br.com.jitec.quiz.presentation.payload.TemplateRequest;
 import br.com.jitec.quiz.presentation.payload.TemplateResponse;
 
@@ -56,7 +56,7 @@ class TemplateControllerTest {
 		templates.add(new TemplateDto.Builder().withDescription("description2").withUid("uid-2").build());
 		Mockito.when(templateService.getTemplates()).thenReturn(templates);
 
-		List<SimpleTemplateResponse> result = templateController.getTemplates();
+		List<TemplateResponse> result = templateController.getTemplates();
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(2, result.size());
@@ -104,12 +104,7 @@ class TemplateControllerTest {
 
 	@Test
 	void testGetTemplate() {
-		List<QuestionDto> questionsDto = new ArrayList<>();
-		questionsDto.add(new QuestionDto.Builder().withUid("question-uid-1").build());
-		questionsDto.add(new QuestionDto.Builder().withUid("question-uid-2").build());
-
-		TemplateDto template = new TemplateDto.Builder().withDescription("description").withUid("template-uid")
-				.withQuestions(questionsDto).build();
+		TemplateDto template = new TemplateDto.Builder().withDescription("description").withUid("template-uid").build();
 		Mockito.when(templateService.getTemplate("template-uid")).thenReturn(template);
 
 		ResponseEntity<TemplateResponse> result = templateController.getTemplate("template-uid");
@@ -117,7 +112,6 @@ class TemplateControllerTest {
 		Assertions.assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
 		Assertions.assertEquals("description", result.getBody().getDescription());
 		Assertions.assertEquals("template-uid", result.getBody().getTemplateUid());
-		Assertions.assertEquals(2, result.getBody().getQuestions().size());
 	}
 
 	@Test
@@ -161,6 +155,24 @@ class TemplateControllerTest {
 		Assertions.assertEquals("PENDING", result.getBody().getStatus());
 		Assertions.assertEquals(dtBegin, result.getBody().getBegin());
 		Assertions.assertEquals(dtEnd, result.getBody().getEnd());
+	}
+
+	@Test
+	void testGetTemplateComplete() {
+		List<QuestionDto> questionsDto = new ArrayList<>();
+		questionsDto.add(new QuestionDto.Builder().withUid("question-uid-1").build());
+		questionsDto.add(new QuestionDto.Builder().withUid("question-uid-2").build());
+
+		TemplateDto template = new TemplateDto.Builder().withDescription("description").withUid("template-uid")
+				.withQuestions(questionsDto).build();
+		Mockito.when(templateService.getTemplate("template-uid")).thenReturn(template);
+
+		ResponseEntity<TemplateCompleteResponse> result = templateController.getTemplateAndQuestions("template-uid");
+
+		Assertions.assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
+		Assertions.assertEquals("description", result.getBody().getDescription());
+		Assertions.assertEquals("template-uid", result.getBody().getTemplateUid());
+		Assertions.assertEquals(2, result.getBody().getQuestions().size());
 	}
 
 	@Test
