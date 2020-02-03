@@ -76,7 +76,8 @@ public class AnswerServiceImpl implements AnswerService {
 		LocalDateTime now = LocalDateTime.now();
 		boolean quizOnTime = now.isAfter(quiz.getBegin()) && now.isBefore(quiz.getEnd());
 		if (!quizActive || !quizOnTime) {
-			throw new BusinessValidationException("Quiz is no longer accepting answers");
+			throw new BusinessValidationException(
+					"Quiz is not ACTIVE or its date limits has been exceeded. Not allowed to register answers");
 		}
 	}
 
