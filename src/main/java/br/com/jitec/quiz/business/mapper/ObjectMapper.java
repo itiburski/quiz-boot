@@ -42,33 +42,33 @@ public class ObjectMapper {
     }
 
 	/**
-	 * <p>
-	 * Note: outClass object must have default constructor with no arguments
-	 * </p>
+	 * Maps {@code entity} into a new instance of {@code outClass} type.
 	 *
+	 * @param <S>      type of source object to map from.
 	 * @param <D>      type of result object.
-	 * @param <T>      type of source object to map from.
 	 * @param entity   entity that needs to be mapped.
-	 * @param outClass class of result object.
-	 * @return new object of <code>outClass</code> type.
+	 * @param outClass class of result object. <strong>Note:</strong>
+	 *                 {@code outClass} object <ins>must have</ins> default
+	 *                 constructor with no arguments
+	 * @return new object of {@code outClass} type.
 	 */
-	public static <D, T> D map(final T entity, Class<D> outClass) {
+	public static <S, D> D map(final S entity, Class<D> outClass) {
 		return modelMapper.map(entity, outClass);
 	}
 
 	/**
-	 * <p>
-	 * Note: outClass object must have default constructor with no arguments
-	 * </p>
+	 * Maps all {@code entityCollection} elements into a new {@code outClass} list
 	 *
-	 * @param entityList list of entities that needs to be mapped
-	 * @param outCLass   class of result list element
-	 * @param <D>        type of objects in result list
-	 * @param <T>        type of entity in <code>entityList</code>
-	 * @return list of mapped object with <code><D></code> type.
+	 * @param <S>              type of entity in {@code entityCollection}
+	 * @param <D>              type of objects in result list
+	 * @param entityCollection Collection of entities that needs to be mapped
+	 * @param outClass         class of result list element. <strong>Note:</strong>
+	 *                         {@code outClass} object <ins>must have</ins> default
+	 *                         constructor with no arguments
+	 * @return list of mapped object with {@code outClass} type.
 	 */
-	public static <D, T> List<D> mapAll(final Collection<T> entityList, Class<D> outCLass) {
-		return entityList.stream().map(entity -> map(entity, outCLass)).collect(Collectors.toList());
+	public static <S, D> List<D> mapAll(final Collection<S> entityCollection, Class<D> outClass) {
+		return entityCollection.stream().map(entity -> map(entity, outClass)).collect(Collectors.toList());
 	}
 
 	private static <E> List<E> makeList(Iterable<E> iter) {
@@ -79,13 +79,26 @@ public class ObjectMapper {
 		return list;
 	}
 
-	public static <D, T> List<D> mapAll(final Iterable<T> entityList, Class<D> outCLass) {
-		return makeList(entityList).stream().map(entity -> map(entity, outCLass)).collect(Collectors.toList());
+	/**
+	 * Maps all {@code entityIterable} elements into a new {@code outClass} list
+	 *
+	 * @param <S>            type of entity in {@code entityIterable}
+	 * @param <D>            type of objects in result list
+	 * @param entityIterable Iterable of entities that needs to be mapped
+	 * @param outClass       class of result list element. <strong>Note:</strong>
+	 *                       {@code outClass} object <ins>must have</ins> default
+	 *                       constructor with no arguments
+	 * @return list of mapped object with {@code outClass} type.
+	 */
+	public static <S, D> List<D> mapAll(final Iterable<S> entityIterable, Class<D> outClass) {
+		return makeList(entityIterable).stream().map(entity -> map(entity, outClass)).collect(Collectors.toList());
 	}
 
 	/**
 	 * Maps {@code source} to {@code destination}.
 	 *
+	 * @param <S>         type of {@code source} object
+	 * @param <D>         type of {@code destination} object
 	 * @param source      object to map from
 	 * @param destination object to map to
 	 */
