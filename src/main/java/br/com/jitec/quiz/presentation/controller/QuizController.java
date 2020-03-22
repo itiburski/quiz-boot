@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
+import br.com.jitec.quiz.business.dto.QuizSummaryDto;
 import br.com.jitec.quiz.business.mapper.ObjectMapper;
 import br.com.jitec.quiz.business.service.QuizService;
 import br.com.jitec.quiz.presentation.payload.QuizCompleteResponse;
 import br.com.jitec.quiz.presentation.payload.QuizRequest;
 import br.com.jitec.quiz.presentation.payload.QuizResponse;
+import br.com.jitec.quiz.presentation.payload.QuizSummaryResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -104,6 +106,17 @@ public class QuizController {
 
 		QuizDto updatedQuiz = quizService.endQuiz(quizUid);
 		QuizResponse response = ObjectMapper.map(updatedQuiz, QuizResponse.class);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "Produces a summary containing the number of answers for each choice for each quiz's question", code = 200)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Return the summarized choices quantity for each quiz's question") })
+	@GetMapping(path = "/{quizUid}/summary", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<QuizSummaryResponse> getSummary(@PathVariable String quizUid) {
+
+		QuizSummaryDto quizSummary = quizService.getSummary(quizUid);
+		QuizSummaryResponse response = ObjectMapper.map(quizSummary, QuizSummaryResponse.class);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

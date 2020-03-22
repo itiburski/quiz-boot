@@ -1,5 +1,6 @@
 package br.com.jitec.quiz.business.service.impl;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
@@ -15,8 +16,10 @@ import org.mockito.MockitoAnnotations;
 
 import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
+import br.com.jitec.quiz.business.dto.QuizSummaryDto;
 import br.com.jitec.quiz.business.exception.BusinessValidationException;
 import br.com.jitec.quiz.business.exception.DataNotFoundException;
+import br.com.jitec.quiz.data.entity.Choices;
 import br.com.jitec.quiz.data.entity.Question;
 import br.com.jitec.quiz.data.entity.Quiz;
 import br.com.jitec.quiz.data.entity.StatusQuiz;
@@ -298,6 +301,77 @@ class QuizServiceImplTest {
 		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
 
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.deleteQuiz("quiz-uid"));
+	}
+
+	@Test
+	void testGetSummary() {
+		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("quiz-description")
+				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).withId(1L).build();
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		
+		List<Object[]> answers = new ArrayList<>();
+		answers.add(new Object[] { "question1", "question-uid-1", Choices.POOR.getCode(), new BigInteger("2") });
+		answers.add(new Object[] { "question1", "question-uid-1", Choices.GOOD.getCode(), new BigInteger("4") });
+		answers.add(new Object[] { "question2", "question-uid-2", Choices.EXCELLENT.getCode(), new BigInteger("5") });
+		answers.add(new Object[] { "question2", "question-uid-2", Choices.GOOD.getCode(), new BigInteger("1") });
+		Mockito.when(quizRepository.findAnswersByQuizId(1L)).thenReturn(answers);
+
+		QuizSummaryDto summary = quizService.getSummary("quiz-uid");
+
+		Assertions.assertNotNull(summary);
+		Assertions.assertEquals("quiz-description", summary.getDescription());
+		Assertions.assertEquals("ENDED", summary.getStatus());
+		Assertions.assertEquals(2, summary.getQuestionsSummary().size());
+
+		Assertions.assertEquals("question1", summary.getQuestionsSummary().get(0).getDescription());
+		Assertions.assertEquals("question-uid-1", summary.getQuestionsSummary().get(0).getQuestionUid());
+		Assertions.assertEquals(4, summary.getQuestionsSummary().get(0).getChoicesSummary().size());
+
+		Assertions.assertEquals("question2", summary.getQuestionsSummary().get(1).getDescription());
+		Assertions.assertEquals("question-uid-2", summary.getQuestionsSummary().get(1).getQuestionUid());
+		Assertions.assertEquals(4, summary.getQuestionsSummary().get(1).getChoicesSummary().size());
+	}
+
+	@Test
+	void testGetSummary_NoAnswers() {
+		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("quiz-description")
+				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).withId(1L).build();
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+
+		List<Object[]> answers = new ArrayList<>();
+		Mockito.when(quizRepository.findAnswersByQuizId(1L)).thenReturn(answers);
+
+		QuizSummaryDto summary = quizService.getSummary("quiz-uid");
+
+		Assertions.assertNotNull(summary);
+		Assertions.assertEquals("quiz-description", summary.getDescription());
+		Assertions.assertEquals("ENDED", summary.getStatus());
+		Assertions.assertEquals(0, summary.getQuestionsSummary().size());
+	}
+
+	@Test
+	void testGetSummary_WithQuizUidNotFound() {
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+		
+		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getSummary("quiz-uid"));
+	}
+
+	@Test
+	void testGetSummary_WithPendingStatus() {
+		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
+				.withStatus(StatusQuiz.PENDING).withBegin(dtBegin).withEnd(dtEnd).build();
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+
+		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.getSummary("quiz-uid"));
+	}
+
+	@Test
+	void testGetSummary_WithActiveStatus() {
+		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
+				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
+		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+
+		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.getSummary("quiz-uid"));
 	}
 
 }

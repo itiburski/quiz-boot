@@ -12,20 +12,20 @@ class ChoicesTest {
 
 	@Test
 	void testValueOf() {
-		Assertions.assertEquals(Choices.TERRIBLE, Choices.valueOf(1));
-		Assertions.assertEquals(Choices.POOR, Choices.valueOf(2));
-		Assertions.assertEquals(Choices.GOOD, Choices.valueOf(3));
-		Assertions.assertEquals(Choices.EXCELLENT, Choices.valueOf(4));
+		Assertions.assertEquals(Choices.TERRIBLE, Choices.valueOf(0));
+		Assertions.assertEquals(Choices.POOR, Choices.valueOf(1));
+		Assertions.assertEquals(Choices.GOOD, Choices.valueOf(2));
+		Assertions.assertEquals(Choices.EXCELLENT, Choices.valueOf(3));
 		Integer code = null;
 		Assertions.assertNull(Choices.valueOf(code));
 	}
 
 	@Test
 	void testGetCode() {
-		Assertions.assertEquals(1, Choices.TERRIBLE.getCode());
-		Assertions.assertEquals(2, Choices.POOR.getCode());
-		Assertions.assertEquals(3, Choices.GOOD.getCode());
-		Assertions.assertEquals(4, Choices.EXCELLENT.getCode());
+		Assertions.assertEquals(0, Choices.TERRIBLE.getCode());
+		Assertions.assertEquals(1, Choices.POOR.getCode());
+		Assertions.assertEquals(2, Choices.GOOD.getCode());
+		Assertions.assertEquals(3, Choices.EXCELLENT.getCode());
 	}
 
 	@Test

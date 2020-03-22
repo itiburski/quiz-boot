@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
+import br.com.jitec.quiz.business.dto.QuizSummaryDto;
 
 public interface QuizService {
 
@@ -22,5 +23,7 @@ public interface QuizService {
 	QuizDto updateQuiz(String quizUid, QuizDto quizDto);
 
 	void deleteQuiz(String quizUid);
+
+	QuizSummaryDto getSummary(String quizUid);
 
 }

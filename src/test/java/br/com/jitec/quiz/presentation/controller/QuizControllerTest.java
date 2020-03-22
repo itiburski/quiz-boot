@@ -17,10 +17,12 @@ import org.springframework.http.ResponseEntity;
 
 import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
+import br.com.jitec.quiz.business.dto.QuizSummaryDto;
 import br.com.jitec.quiz.business.service.QuizService;
 import br.com.jitec.quiz.presentation.payload.QuizCompleteResponse;
 import br.com.jitec.quiz.presentation.payload.QuizRequest;
 import br.com.jitec.quiz.presentation.payload.QuizResponse;
+import br.com.jitec.quiz.presentation.payload.QuizSummaryResponse;
 
 class QuizControllerTest {
 
@@ -149,6 +151,18 @@ class QuizControllerTest {
 		Mockito.when(quizService.endQuiz("quiz-uid")).thenReturn(quizDtoMock);
 
 		ResponseEntity<QuizResponse> result = quizController.endQuiz("quiz-uid");
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+		Assertions.assertEquals("quiz-uid", result.getBody().getQuizUid());
+	}
+
+	@Test
+	void testGetSummary() {
+		QuizSummaryDto summaryDtoMock = new QuizSummaryDto.Builder().withQuizUid("quiz-uid").build();
+		Mockito.when(quizService.getSummary("quiz-uid")).thenReturn(summaryDtoMock);
+
+		ResponseEntity<QuizSummaryResponse> result = quizController.getSummary("quiz-uid");
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());

@@ -1,6 +1,8 @@
 package br.com.jitec.quiz.business.service.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.jitec.quiz.business.dto.ChoiceDto;
+import br.com.jitec.quiz.business.dto.ChoiceSummaryDto;
 import br.com.jitec.quiz.business.dto.QuestionDto;
+import br.com.jitec.quiz.business.dto.QuestionSummaryDto;
 import br.com.jitec.quiz.business.dto.QuizCompleteDto;
 import br.com.jitec.quiz.business.dto.QuizDto;
+import br.com.jitec.quiz.business.dto.QuizSummaryDto;
 import br.com.jitec.quiz.business.exception.BusinessValidationException;
 import br.com.jitec.quiz.business.mapper.ObjectMapper;
 import br.com.jitec.quiz.business.precondition.BusinessPreconditions;
@@ -126,6 +131,67 @@ public class QuizServiceImpl implements QuizService {
 		quizRepository.delete(quiz);
 	}
 
+	@Override
+	public QuizSummaryDto getSummary(String quizUid) {
+
+		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		checkEndedQuiz(quiz);
+
+		List<Object[]> answers = quizRepository.findAnswersByQuizId(quiz.getId());
+
+		QuizSummaryDto quizSummary = new QuizSummaryDto();
+		quizSummary.setQuizUid(quiz.getQuizUid());
+		quizSummary.setDescription(quiz.getDescription());
+		quizSummary.setStatus(quiz.getStatus().toString());
+		quizSummary.setQuestionsSummary(buildQuestionsSummary(quiz, answers));
+
+		return quizSummary;
+	}
+
+	private List<QuestionSummaryDto> buildQuestionsSummary(Quiz quiz, List<Object[]> answers) {
+		List<QuestionSummaryDto> questionsSummary = new ArrayList<>();
+		String lastQuestionUid = null;
+		QuestionSummaryDto qs = null;
+
+		for (Object[] answer : answers) {
+			String questionUid = (String) answer[1];
+			if (!questionUid.equals(lastQuestionUid)) {
+				if (qs != null) {
+					questionsSummary.add(qs);
+				}
+
+				qs = new QuestionSummaryDto();
+				qs.setDescription((String) answer[0]);
+				qs.setQuestionUid(questionUid);
+				qs.setChoicesSummary(new ArrayList<>());
+
+				lastQuestionUid = questionUid;
+			}
+
+			ChoiceSummaryDto choice = new ChoiceSummaryDto();
+			choice.setChoice(Choices.valueOf(((Integer) answer[2])).toString());
+			choice.setQuantity(((BigInteger) answer[3]).intValue());
+			qs.getChoicesSummary().add(choice);
+		}
+
+		if (qs != null) {
+			questionsSummary.add(qs);
+		}
+
+		for (QuestionSummaryDto question : questionsSummary) {
+			for (Choices enumChoice : Choices.values()) {
+				if (question.getChoicesSummary().stream()
+						.noneMatch(cs -> cs.getChoice().equals(enumChoice.toString()))) {
+					ChoiceSummaryDto newChoice = new ChoiceSummaryDto(enumChoice.toString(), 0);
+					question.getChoicesSummary().add(newChoice);
+				}
+			}
+			Collections.sort(question.getChoicesSummary());
+		}
+
+		return questionsSummary;
+	}
+
 	private void checkTemplateActive(Template template) {
 		if (template == null) {
 			throw new BusinessValidationException("Template is not active. Not allowed to create a Quiz based on it.");
@@ -142,6 +208,12 @@ public class QuizServiceImpl implements QuizService {
 	private void checkPendingQuiz(Quiz quiz) {
 		if (!StatusQuiz.PENDING.equals(quiz.getStatus())) {
 			throw new BusinessValidationException("Quiz is not PENDING. Not allowed to modify it.");
+		}
+	}
+
+	private void checkEndedQuiz(Quiz quiz) {
+		if (!StatusQuiz.ENDED.equals(quiz.getStatus())) {
+			throw new BusinessValidationException("Quiz is not ENDED. It is not possible to get the summary.");
 		}
 	}
 
