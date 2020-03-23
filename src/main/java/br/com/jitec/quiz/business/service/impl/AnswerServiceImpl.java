@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.jitec.quiz.business.dto.AnswerChoiceDto;
 import br.com.jitec.quiz.business.dto.AnswerDto;
 import br.com.jitec.quiz.business.exception.BusinessValidationException;
-import br.com.jitec.quiz.business.precondition.BusinessPreconditions;
 import br.com.jitec.quiz.business.service.AnswerService;
 import br.com.jitec.quiz.data.entity.Answer;
 import br.com.jitec.quiz.data.entity.AnswerChoice;
@@ -38,7 +37,7 @@ public class AnswerServiceImpl implements AnswerService {
 	@Override
 	@Transactional
 	public void saveAnswer(String quizUid, AnswerDto answerDto) {
-		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		Quiz quiz = quizRepository.findByQuizUidOrException(quizUid);
 		
 		checkQuizAcceptAnswers(quiz);
 		
@@ -50,8 +49,7 @@ public class AnswerServiceImpl implements AnswerService {
 		answer = answerRepository.save(answer);
 
 		for (AnswerChoiceDto acDto : answerDto.getAnswerChoices()) {
-			Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(acDto.getQuestionUid()),
-					"Question");
+			Question question = questionRepository.findByUidOrException(acDto.getQuestionUid());
 
 			AnswerChoice answerChoice = new AnswerChoice();
 			answerChoice.setId(new AnswerChoiceId(question.getId(), answer.getId()));

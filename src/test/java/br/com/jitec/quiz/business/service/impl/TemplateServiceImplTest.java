@@ -65,7 +65,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testActivateTemplate() {
 		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.PENDING).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
 
 		TemplateDto result = templateService.activateTemplate("template-uid");
@@ -76,7 +76,8 @@ class TemplateServiceImplTest {
 
 	@Test
 	void testActivateTemplate_WithTemplateUidNotFound() {
-		Mockito.when(templateRepository.findByUid("unexistent-template-uid")).thenReturn(null);
+		Mockito.when(templateRepository.findByUidOrException("template-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> templateService.activateTemplate("template-uid"));
 	}
@@ -84,7 +85,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testActivateTemplate_WithIncompatibleCurrentStatus() {
 		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.ACTIVE).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
 
 		Assertions.assertThrows(BusinessValidationException.class,
@@ -94,7 +95,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testInactivateTemplate() {
 		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.ACTIVE).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
 
 		TemplateDto result = templateService.inactivateTemplate("template-uid");
@@ -105,7 +106,8 @@ class TemplateServiceImplTest {
 
 	@Test
 	void testInactivateTemplate_WithTemplateUidNotFound() {
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(null);
+		Mockito.when(templateRepository.findByUidOrException("template-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> templateService.inactivateTemplate("template-uid"));
 	}
@@ -113,7 +115,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testInactivateTemplate_WithIncompatibleCurrentStatus() {
 		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.INACTIVE).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
 
 		Assertions.assertThrows(BusinessValidationException.class,
@@ -123,7 +125,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testGetTemplate() {
 		Template template = new Template.Builder().withUid("template-uid").build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 
 		TemplateDto result = templateService.getTemplate("template-uid");
 
@@ -133,7 +135,8 @@ class TemplateServiceImplTest {
 
 	@Test
 	void testGetTemplate_WithTemplateUidNotFound() {
-		Mockito.when(templateRepository.findByUid("unexistent-template-uid")).thenReturn(null);
+		Mockito.when(templateRepository.findByUidOrException("unexistent-template-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class,
 				() -> templateService.getTemplate("unexistent-template-uid"));
@@ -143,7 +146,7 @@ class TemplateServiceImplTest {
 	void testUpdateTemplate() {
 		Template template = new Template.Builder().withUid("template-uid").withDescription("description")
 				.withStatus(StatusTemplate.PENDING).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);
 
 		TemplateDto templateDto = new TemplateDto.Builder().withDescription("description-updated").build();
@@ -158,7 +161,7 @@ class TemplateServiceImplTest {
 	void testUpdateTemplate_WithStatusNotPending() {
 		Template template = new Template.Builder().withUid("template-uid").withDescription("description")
 				.withStatus(StatusTemplate.ACTIVE).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 
 		TemplateDto templateDto = new TemplateDto.Builder().withDescription("description-updated").build();
 		Assertions.assertThrows(BusinessValidationException.class,
@@ -169,7 +172,8 @@ class TemplateServiceImplTest {
 
 	@Test
 	void testUpdateTemplate_WithTemplateUidNotFound() {
-		Mockito.when(templateRepository.findByUid("unexistent-template-uid")).thenReturn(null);
+		Mockito.when(templateRepository.findByUidOrException("unexistent-template-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> {
 			TemplateDto templateDto = new TemplateDto.Builder().withDescription("description-updated").build();
@@ -183,7 +187,7 @@ class TemplateServiceImplTest {
 	void testDeleteTemplate() {
 		Template template = new Template.Builder().withUid("template-uid").withDescription("description")
 				.withStatus(StatusTemplate.PENDING).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 
 		templateService.deleteTemplate("template-uid");
 
@@ -194,7 +198,7 @@ class TemplateServiceImplTest {
 	void testDeleteTemplate_WithStatusNotPending() {
 		Template template = new Template.Builder().withUid("template-uid").withDescription("description")
 				.withStatus(StatusTemplate.ACTIVE).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 
 		Assertions.assertThrows(BusinessValidationException.class,
 				() -> templateService.deleteTemplate("template-uid"));
@@ -204,8 +208,8 @@ class TemplateServiceImplTest {
 
 	@Test
 	void testDeleteTemplate_WithTemplateUidNotFound() {
-		Mockito.when(templateRepository.findByUid("unexistent-template-uid")).thenReturn(null);
-
+		Mockito.when(templateRepository.findByUidOrException("unexistent-template-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 		Assertions.assertThrows(DataNotFoundException.class,
 				() -> templateService.deleteTemplate("unexistent-template-uid"));
 
@@ -216,7 +220,7 @@ class TemplateServiceImplTest {
 	void testSaveQuestion() {
 		Template template = new Template.Builder().withUid("template-uid").withDescription("template-description")
 				.withStatus(StatusTemplate.PENDING).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 
 		Question question = new Question.Builder().build();
 		Mockito.when(questionRepository.save(Mockito.any(Question.class))).thenReturn(question);
@@ -231,7 +235,7 @@ class TemplateServiceImplTest {
 	void testSaveQuestion_WithStatusNotPending() {
 		Template template = new Template.Builder().withUid("template-uid").withDescription("template-description")
 				.withStatus(StatusTemplate.ACTIVE).build();
-		Mockito.when(templateRepository.findByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findByUidOrException("template-uid")).thenReturn(template);
 
 		QuestionDto questionDto = new QuestionDto.Builder().withDescription("question-description").build();
 		Assertions.assertThrows(BusinessValidationException.class,
@@ -242,7 +246,8 @@ class TemplateServiceImplTest {
 
 	@Test
 	void testSaveQuestion_WithTemplateUidNotFound() {
-		Mockito.when(templateRepository.findByUid("unexistent-template-uid")).thenReturn(null);
+		Mockito.when(templateRepository.findByUidOrException("unexistent-template-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		QuestionDto questionDto = new QuestionDto.Builder().withDescription("question-dto").build();
 		Assertions.assertThrows(DataNotFoundException.class,
@@ -257,7 +262,7 @@ class TemplateServiceImplTest {
 				.withStatus(StatusTemplate.PENDING).build();
 		Question question = new Question.Builder().withDescription("question").withUid("question-uid")
 				.withTemplate(template).build();
-		Mockito.when(questionRepository.findByUid("question-uid")).thenReturn(question);
+		Mockito.when(questionRepository.findByUidOrException("question-uid")).thenReturn(question);
 
 		Mockito.when(questionRepository.save(Mockito.any(Question.class))).thenReturn(question);
 
@@ -275,7 +280,7 @@ class TemplateServiceImplTest {
 				.withStatus(StatusTemplate.INACTIVE).build();
 		Question question = new Question.Builder().withDescription("question").withUid("question-uid")
 				.withTemplate(template).build();
-		Mockito.when(questionRepository.findByUid("question-uid")).thenReturn(question);
+		Mockito.when(questionRepository.findByUidOrException("question-uid")).thenReturn(question);
 
 		Mockito.when(questionRepository.save(Mockito.any(Question.class))).thenReturn(question);
 
@@ -288,7 +293,8 @@ class TemplateServiceImplTest {
 
 	@Test
 	void testUpdateQuestion_WithQuestionUidNotFound() {
-		Mockito.when(questionRepository.findByUid("unexistent-question-uid")).thenReturn(null);
+		Mockito.when(questionRepository.findByUidOrException("unexistent-question-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		QuestionDto questionDto = new QuestionDto.Builder().withDescription("question-updated").build();
 		Assertions.assertThrows(DataNotFoundException.class,
@@ -303,12 +309,12 @@ class TemplateServiceImplTest {
 				.withStatus(StatusTemplate.PENDING).build();
 		Question question = new Question.Builder().withDescription("question-description").withUid("question-uid")
 				.withTemplate(template).build();
-		Mockito.when(questionRepository.findByUid("question-uid")).thenReturn(question);
+		Mockito.when(questionRepository.findByUidOrException("question-uid")).thenReturn(question);
 
 		Mockito.when(questionRepository.save(Mockito.any(Question.class))).thenReturn(question);
 
 		QuestionDto questionDto = new QuestionDto.Builder().withDescription("question-updated").build();
-		Assertions.assertThrows(DataNotFoundException.class,
+		Assertions.assertThrows(BusinessValidationException.class,
 				() -> templateService.updateQuestion("not-match-template-id", "question-uid", questionDto));
 	}
 
@@ -318,7 +324,7 @@ class TemplateServiceImplTest {
 				.withStatus(StatusTemplate.PENDING).build();
 		Question question = new Question.Builder().withDescription("question-description").withUid("question-uid")
 				.withTemplate(template).build();
-		Mockito.when(questionRepository.findByUid("question-uid")).thenReturn(question);
+		Mockito.when(questionRepository.findByUidOrException("question-uid")).thenReturn(question);
 
 		templateService.deleteQuestion("template-uid", "question-uid");
 		
@@ -331,7 +337,7 @@ class TemplateServiceImplTest {
 				.withStatus(StatusTemplate.ACTIVE).build();
 		Question question = new Question.Builder().withDescription("question-description").withUid("question-uid")
 				.withTemplate(template).build();
-		Mockito.when(questionRepository.findByUid("question-uid")).thenReturn(question);
+		Mockito.when(questionRepository.findByUidOrException("question-uid")).thenReturn(question);
 
 		Assertions.assertThrows(BusinessValidationException.class,
 				() -> templateService.deleteQuestion("template-uid", "question-uid"));
@@ -341,7 +347,8 @@ class TemplateServiceImplTest {
 
 	@Test
 	void testDeleteQuestion_WithQuestionUidNotFound() {
-		Mockito.when(questionRepository.findByUid("unexistent-question-uid")).thenReturn(null);
+		Mockito.when(questionRepository.findByUidOrException("unexistent-question-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class,
 				() -> templateService.deleteQuestion("template-uid", "unexistent-question-uid"));
@@ -356,9 +363,9 @@ class TemplateServiceImplTest {
 		Question question = new Question.Builder().withDescription("question").withUid("question-uid")
 				.withTemplate(template)
 				.build();
-		Mockito.when(questionRepository.findByUid("question-uid")).thenReturn(question);
+		Mockito.when(questionRepository.findByUidOrException("question-uid")).thenReturn(question);
 
-		Assertions.assertThrows(DataNotFoundException.class,
+		Assertions.assertThrows(BusinessValidationException.class,
 				() -> templateService.deleteQuestion("not-match-template-uid", "question-uid"));
 	}
 

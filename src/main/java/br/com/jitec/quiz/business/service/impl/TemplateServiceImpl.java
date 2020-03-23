@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 import br.com.jitec.quiz.business.dto.QuestionDto;
 import br.com.jitec.quiz.business.dto.TemplateDto;
 import br.com.jitec.quiz.business.exception.BusinessValidationException;
-import br.com.jitec.quiz.business.exception.DataNotFoundException;
 import br.com.jitec.quiz.business.mapper.ObjectMapper;
-import br.com.jitec.quiz.business.precondition.BusinessPreconditions;
 import br.com.jitec.quiz.business.service.TemplateService;
 import br.com.jitec.quiz.data.entity.Question;
 import br.com.jitec.quiz.data.entity.StatusTemplate;
@@ -50,7 +48,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public TemplateDto activateTemplate(String templateUid) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid), "Template");
+		Template template = templateRepository.findByUidOrException(templateUid);
 		StatusTemplate newStatus = StatusTemplate.ACTIVE;
 		checkStatusChange(template, StatusTemplate.PENDING, newStatus);
 		template.setStatus(newStatus);
@@ -61,7 +59,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public TemplateDto inactivateTemplate(String templateUid) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid), "Template");
+		Template template = templateRepository.findByUidOrException(templateUid);
 		StatusTemplate newStatus = StatusTemplate.INACTIVE;
 		checkStatusChange(template, StatusTemplate.ACTIVE, newStatus);
 		template.setStatus(newStatus);
@@ -71,15 +69,15 @@ public class TemplateServiceImpl implements TemplateService {
 	}
 
 	@Override
-	public TemplateDto getTemplate(String uid) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid), "Template");
+	public TemplateDto getTemplate(String templateUid) {
+		Template template = templateRepository.findByUidOrException(templateUid);
 		TemplateDto map = ObjectMapper.map(template, TemplateDto.class);
 		return map;
 	}
 
 	@Override
-	public TemplateDto updateTemplate(String uid, TemplateDto templateDto) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid), "Template");
+	public TemplateDto updateTemplate(String templateUid, TemplateDto templateDto) {
+		Template template = templateRepository.findByUidOrException(templateUid);
 		checkTemplatePending(template);
 
 		template.setDescription(templateDto.getDescription());
@@ -88,8 +86,8 @@ public class TemplateServiceImpl implements TemplateService {
 	}
 
 	@Override
-	public void deleteTemplate(String uid) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(uid), "Template");
+	public void deleteTemplate(String templateUid) {
+		Template template = templateRepository.findByUidOrException(templateUid);
 		checkTemplatePending(template);
 
 		templateRepository.delete(template);
@@ -97,7 +95,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public QuestionDto saveQuestion(String templateUid, QuestionDto questionDto) {
-		Template template = BusinessPreconditions.checkFound(templateRepository.findByUid(templateUid), "Template");
+		Template template = templateRepository.findByUidOrException(templateUid);
 		checkTemplatePending(template);
 
 		Question question = ObjectMapper.map(questionDto, Question.class);
@@ -111,7 +109,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public QuestionDto updateQuestion(String templateUid, String questionUid, QuestionDto questionDto) {
-		Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(questionUid), "Question");
+		Question question = questionRepository.findByUidOrException(questionUid);
 		checkTemplatePending(question.getTemplate());
 		checkMatchTemplateUidQuestionUid(templateUid, question);
 		
@@ -123,7 +121,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public void deleteQuestion(String templateUid, String questionUid) {
-		Question question = BusinessPreconditions.checkFound(questionRepository.findByUid(questionUid), "Question");
+		Question question = questionRepository.findByUidOrException(questionUid);
 		checkTemplatePending(question.getTemplate());
 		checkMatchTemplateUidQuestionUid(templateUid, question);
 
@@ -132,7 +130,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	private void checkMatchTemplateUidQuestionUid(String templateUid, Question question) {
 		if (!question.getTemplate().getUid().equals(templateUid)) {
-			throw new DataNotFoundException("The questionUid does not belong to the templateUid");
+			throw new BusinessValidationException("The questionUid does not belong to the templateUid");
 		}
 	}
 

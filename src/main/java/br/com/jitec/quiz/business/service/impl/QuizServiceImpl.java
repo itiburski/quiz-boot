@@ -18,7 +18,6 @@ import br.com.jitec.quiz.business.dto.QuizDto;
 import br.com.jitec.quiz.business.dto.QuizSummaryDto;
 import br.com.jitec.quiz.business.exception.BusinessValidationException;
 import br.com.jitec.quiz.business.mapper.ObjectMapper;
-import br.com.jitec.quiz.business.precondition.BusinessPreconditions;
 import br.com.jitec.quiz.business.service.QuizService;
 import br.com.jitec.quiz.data.entity.Choices;
 import br.com.jitec.quiz.data.entity.Question;
@@ -47,8 +46,9 @@ public class QuizServiceImpl implements QuizService {
 
 	@Override
 	public QuizDto saveQuiz(String templateUid, QuizDto quizDto) {
-		Template template = templateRepository.findActiveByUid(templateUid);
-		checkTemplateActive(template);
+		Template template = templateRepository.findActiveByUid(templateUid).orElseThrow(
+				() -> new BusinessValidationException(
+						"Template is not active. Not allowed to create a Quiz based on it."));
 
 		Quiz quiz = ObjectMapper.map(quizDto, Quiz.class);
 		quiz.setQuizUid(UUID.randomUUID().toString());
@@ -63,7 +63,7 @@ public class QuizServiceImpl implements QuizService {
 
 	@Override
 	public QuizDto startQuiz(String quizUid) {
-		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		Quiz quiz = quizRepository.findByQuizUidOrException(quizUid);
 		StatusQuiz newStatus = StatusQuiz.ACTIVE;
 		checkStatusChange(quiz, StatusQuiz.PENDING, newStatus);
 		quiz.setStatus(newStatus);
@@ -75,7 +75,7 @@ public class QuizServiceImpl implements QuizService {
 
 	@Override
 	public QuizDto endQuiz(String quizUid) {
-		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		Quiz quiz = quizRepository.findByQuizUidOrException(quizUid);
 		StatusQuiz newStatus = StatusQuiz.ENDED;
 		checkStatusChange(quiz, StatusQuiz.ACTIVE, newStatus);
 		quiz.setStatus(newStatus);
@@ -87,13 +87,13 @@ public class QuizServiceImpl implements QuizService {
 
 	@Override
 	public QuizDto getQuiz(String quizUid) {
-		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		Quiz quiz = quizRepository.findByQuizUidOrException(quizUid);
 		return ObjectMapper.map(quiz, QuizDto.class);
 	}
 
 	@Override
 	public QuizCompleteDto getQuizComplete(String quizUid) {
-		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		Quiz quiz = quizRepository.findByQuizUidOrException(quizUid);
 		QuizCompleteDto quizDetailDto = ObjectMapper.map(quiz, QuizCompleteDto.class);
 		quizDetailDto.setQuestions(new ArrayList<>());
 		quizDetailDto.setChoices(new ArrayList<>());
@@ -111,7 +111,7 @@ public class QuizServiceImpl implements QuizService {
 
 	@Override
 	public QuizDto updateQuiz(String quizUid, QuizDto quizDto) {
-		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		Quiz quiz = quizRepository.findByQuizUidOrException(quizUid);
 		checkPendingQuiz(quiz);
 
 		quiz.setDescription(quizDto.getDescription());
@@ -125,7 +125,7 @@ public class QuizServiceImpl implements QuizService {
 
 	@Override
 	public void deleteQuiz(String quizUid) {
-		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		Quiz quiz = quizRepository.findByQuizUidOrException(quizUid);
 		checkPendingQuiz(quiz);
 
 		quizRepository.delete(quiz);
@@ -134,7 +134,7 @@ public class QuizServiceImpl implements QuizService {
 	@Override
 	public QuizSummaryDto getSummary(String quizUid) {
 
-		Quiz quiz = BusinessPreconditions.checkFound(quizRepository.findByQuizUid(quizUid), "Quiz");
+		Quiz quiz = quizRepository.findByQuizUidOrException(quizUid);
 		checkEndedQuiz(quiz);
 
 		List<Object[]> answers = quizRepository.findAnswersByQuizId(quiz.getId());
@@ -190,12 +190,6 @@ public class QuizServiceImpl implements QuizService {
 		}
 
 		return questionsSummary;
-	}
-
-	private void checkTemplateActive(Template template) {
-		if (template == null) {
-			throw new BusinessValidationException("Template is not active. Not allowed to create a Quiz based on it.");
-		}
 	}
 
 	private void checkStatusChange(Quiz quiz, StatusQuiz desiredStatus, StatusQuiz nextStatus) {

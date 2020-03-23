@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,7 +81,7 @@ class QuizServiceImplTest {
 	@Test
 	void testSaveQuiz() {
 		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.ACTIVE).build();
-		Mockito.when(templateRepository.findActiveByUid("template-uid")).thenReturn(template);
+		Mockito.when(templateRepository.findActiveByUid("template-uid")).thenReturn(Optional.of(template));
 
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description").withTemplate(template)
 				.withStatus(StatusQuiz.PENDING).withBegin(dtBegin).withEnd(dtEnd).build();
@@ -99,7 +100,7 @@ class QuizServiceImplTest {
 
 	@Test
 	void testSaveQuiz_TemplateNotActive() {
-		Mockito.when(templateRepository.findActiveByUid("template-uid")).thenReturn(null);
+		Mockito.when(templateRepository.findActiveByUid("template-uid")).thenReturn(Optional.empty());
 
 		QuizDto quizDto = new QuizDto.Builder().build();
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.saveQuiz("template-uid", quizDto));
@@ -109,7 +110,7 @@ class QuizServiceImplTest {
 	void testStartQuiz() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.PENDING).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 		Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
 
 		QuizDto result = quizService.startQuiz("quiz-uid");
@@ -121,7 +122,8 @@ class QuizServiceImplTest {
 
 	@Test
 	void testStartQuiz_WithQuizUidNotFound() {
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.startQuiz("quiz-uid"));
 	}
@@ -130,7 +132,7 @@ class QuizServiceImplTest {
 	void testStartQuiz_WithIncompatibleCurrentStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.startQuiz("quiz-uid"));
 	}
@@ -139,7 +141,7 @@ class QuizServiceImplTest {
 	void testEndQuiz() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 		Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
 
 		QuizDto result = quizService.endQuiz("quiz-uid");
@@ -151,7 +153,8 @@ class QuizServiceImplTest {
 
 	@Test
 	void testEndQuiz_WithQuizUidNotFound() {
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.endQuiz("quiz-uid"));
 	}
@@ -160,7 +163,7 @@ class QuizServiceImplTest {
 	void testEndQuiz_WithIncompatibleCurrentStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.endQuiz("quiz-uid"));
 	}
@@ -169,7 +172,7 @@ class QuizServiceImplTest {
 	void testGetQuiz() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		QuizDto result = quizService.getQuiz("quiz-uid");
 
@@ -183,7 +186,8 @@ class QuizServiceImplTest {
 
 	@Test
 	void testGetQuiz_WithQuizUidNotFound() {
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getQuiz("quiz-uid"));
 	}
@@ -197,7 +201,7 @@ class QuizServiceImplTest {
 				.build();
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).withTemplate(template).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		QuizCompleteDto result = quizService.getQuizComplete("quiz-uid");
 
@@ -213,7 +217,8 @@ class QuizServiceImplTest {
 
 	@Test
 	void testGetQuizComplete_WithQuizUidNotFound() {
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getQuizComplete("quiz-uid"));
 	}
@@ -222,7 +227,7 @@ class QuizServiceImplTest {
 	void testUpdateQuiz() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.PENDING).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 		Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
 
 		LocalDateTime newBegin = LocalDateTime.of(2020, Month.JANUARY, 01, 0, 0);
@@ -241,7 +246,8 @@ class QuizServiceImplTest {
 
 	@Test
 	void testUpdateQuiz_WithQuizUidNotFound() {
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		QuizDto quizDto = new QuizDto.Builder().build();
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.updateQuiz("quiz-uid", quizDto));
@@ -251,7 +257,7 @@ class QuizServiceImplTest {
 	void testUpdateQuiz_WithActiveStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		QuizDto quizDto = new QuizDto.Builder().build();
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.updateQuiz("quiz-uid", quizDto));
@@ -261,7 +267,7 @@ class QuizServiceImplTest {
 	void testUpdateQuiz_WithEndedStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		QuizDto quizDto = new QuizDto.Builder().build();
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.updateQuiz("quiz-uid", quizDto));
@@ -271,7 +277,7 @@ class QuizServiceImplTest {
 	void testDeleteQuiz() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.PENDING).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		quizService.deleteQuiz("quiz-uid");
 
@@ -280,7 +286,8 @@ class QuizServiceImplTest {
 
 	@Test
 	void testDeleteQuiz_WithQuizUidNotFound() {
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.deleteQuiz("quiz-uid"));
 	}
@@ -289,7 +296,7 @@ class QuizServiceImplTest {
 	void testDeleteQuiz_WithActiveStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.deleteQuiz("quiz-uid"));
 	}
@@ -298,7 +305,7 @@ class QuizServiceImplTest {
 	void testDeleteQuiz_WithEndedStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.deleteQuiz("quiz-uid"));
 	}
@@ -307,7 +314,7 @@ class QuizServiceImplTest {
 	void testGetSummary() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("quiz-description")
 				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).withId(1L).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 		
 		List<Object[]> answers = new ArrayList<>();
 		answers.add(new Object[] { "question1", "question-uid-1", Choices.POOR.getCode(), new BigInteger("2") });
@@ -336,7 +343,7 @@ class QuizServiceImplTest {
 	void testGetSummary_NoAnswers() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("quiz-description")
 				.withStatus(StatusQuiz.ENDED).withBegin(dtBegin).withEnd(dtEnd).withId(1L).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		List<Object[]> answers = new ArrayList<>();
 		Mockito.when(quizRepository.findAnswersByQuizId(1L)).thenReturn(answers);
@@ -351,7 +358,8 @@ class QuizServiceImplTest {
 
 	@Test
 	void testGetSummary_WithQuizUidNotFound() {
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(null);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 		
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getSummary("quiz-uid"));
 	}
@@ -360,7 +368,7 @@ class QuizServiceImplTest {
 	void testGetSummary_WithPendingStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.PENDING).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.getSummary("quiz-uid"));
 	}
@@ -369,7 +377,7 @@ class QuizServiceImplTest {
 	void testGetSummary_WithActiveStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withStatus(StatusQuiz.ACTIVE).withBegin(dtBegin).withEnd(dtEnd).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		Assertions.assertThrows(BusinessValidationException.class, () -> quizService.getSummary("quiz-uid"));
 	}

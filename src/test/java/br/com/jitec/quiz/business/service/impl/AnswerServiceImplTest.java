@@ -53,7 +53,7 @@ class AnswerServiceImplTest {
 	void testSaveAnswer() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withStatus(StatusQuiz.ACTIVE).withBegin(dtYesterday)
 				.withEnd(dtTomorrow).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		Answer answer = new Answer.Builder().withId(2L).withQuiz(quiz).withDate(LocalDateTime.now())
 				.withAnswerChoices(new ArrayList<>()).build();
@@ -61,10 +61,10 @@ class AnswerServiceImplTest {
 
 		Question question1 = new Question.Builder().withId(1L).withUid("quest-uid-1").withDescription("description-1")
 				.build();
-		Mockito.when(questionRepository.findByUid("quest-uid-1")).thenReturn(question1);
+		Mockito.when(questionRepository.findByUidOrException("quest-uid-1")).thenReturn(question1);
 		Question question2 = new Question.Builder().withId(2L).withUid("quest-uid-2").withDescription("description-2")
 				.build();
-		Mockito.when(questionRepository.findByUid("quest-uid-2")).thenReturn(question2);
+		Mockito.when(questionRepository.findByUidOrException("quest-uid-2")).thenReturn(question2);
 		
 
 		List<AnswerChoiceDto> answerChoicesDto = new ArrayList<>();
@@ -79,7 +79,8 @@ class AnswerServiceImplTest {
 
 	@Test
 	void testSaveAnswer_WithQuizUidNotFound() {
-		Mockito.when(quizRepository.findByQuizUid("unexistent-quiz-uid")).thenReturn(null);
+		Mockito.when(quizRepository.findByQuizUidOrException("unexistent-uid"))
+				.thenThrow(new DataNotFoundException("-"));
 
 		AnswerDto answerDto = new AnswerDto.Builder().build();
 
@@ -93,7 +94,7 @@ class AnswerServiceImplTest {
 	void testSaveAnswer_WithIncompatibleCurrentStatus() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withStatus(StatusQuiz.PENDING).withBegin(dtYesterday)
 				.withEnd(dtTomorrow).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		AnswerDto answerDto = new AnswerDto.Builder().build();
 
@@ -107,7 +108,7 @@ class AnswerServiceImplTest {
 	void testSaveAnswer_OutOfBeginEndDate() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withStatus(StatusQuiz.ACTIVE).withBegin(dtYesterday)
 				.withEnd(dtYesterday).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		AnswerDto answerDto = new AnswerDto.Builder().build();
 
@@ -121,7 +122,7 @@ class AnswerServiceImplTest {
 	void testSaveAnswer_WithInvalidChoice() {
 		Quiz quiz = new Quiz.Builder().withQuizUid("quiz-uid").withStatus(StatusQuiz.ACTIVE).withBegin(dtYesterday)
 				.withEnd(dtTomorrow).build();
-		Mockito.when(quizRepository.findByQuizUid("quiz-uid")).thenReturn(quiz);
+		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
 		Answer answer = new Answer.Builder().withId(2L).withQuiz(quiz).withDate(LocalDateTime.now())
 				.withAnswerChoices(new ArrayList<>()).build();
@@ -129,10 +130,10 @@ class AnswerServiceImplTest {
 
 		Question question1 = new Question.Builder().withId(1L).withUid("quest-uid-1").withDescription("description-1")
 				.build();
-		Mockito.when(questionRepository.findByUid("quest-uid-1")).thenReturn(question1);
+		Mockito.when(questionRepository.findByUidOrException("quest-uid-1")).thenReturn(question1);
 		Question question2 = new Question.Builder().withId(2L).withUid("quest-uid-2").withDescription("description-2")
 				.build();
-		Mockito.when(questionRepository.findByUid("quest-uid-2")).thenReturn(question2);
+		Mockito.when(questionRepository.findByUidOrException("quest-uid-2")).thenReturn(question2);
 
 		List<AnswerChoiceDto> answerChoicesDto = new ArrayList<>();
 		answerChoicesDto
