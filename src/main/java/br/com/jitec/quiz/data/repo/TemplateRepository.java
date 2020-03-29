@@ -16,7 +16,7 @@ public interface TemplateRepository extends CrudRepository<Template, Long> {
 	Optional<Template> findByUid(String uid);
 
 	default Template findByUidOrException(String uid) {
-		return findByUid(uid).orElseThrow(() -> new DataNotFoundException("Template"));
+		return findByUid(uid).orElseThrow(() -> new DataNotFoundException(Template.class));
 	}
 
 	@Query("select t from Template t where t.uid = :templateUid and t.status = 1")

@@ -123,7 +123,7 @@ class QuizServiceImplTest {
 	@Test
 	void testStartQuiz_WithQuizUidNotFound() {
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Quiz.class));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.startQuiz("quiz-uid"));
 	}
@@ -154,7 +154,7 @@ class QuizServiceImplTest {
 	@Test
 	void testEndQuiz_WithQuizUidNotFound() {
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Quiz.class));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.endQuiz("quiz-uid"));
 	}
@@ -187,7 +187,7 @@ class QuizServiceImplTest {
 	@Test
 	void testGetQuiz_WithQuizUidNotFound() {
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Quiz.class));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getQuiz("quiz-uid"));
 	}
@@ -218,7 +218,7 @@ class QuizServiceImplTest {
 	@Test
 	void testGetQuizComplete_WithQuizUidNotFound() {
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Quiz.class));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getQuizComplete("quiz-uid"));
 	}
@@ -247,7 +247,7 @@ class QuizServiceImplTest {
 	@Test
 	void testUpdateQuiz_WithQuizUidNotFound() {
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Quiz.class));
 
 		QuizDto quizDto = new QuizDto.Builder().build();
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.updateQuiz("quiz-uid", quizDto));
@@ -287,7 +287,7 @@ class QuizServiceImplTest {
 	@Test
 	void testDeleteQuiz_WithQuizUidNotFound() {
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Quiz.class));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.deleteQuiz("quiz-uid"));
 	}
@@ -359,7 +359,7 @@ class QuizServiceImplTest {
 	@Test
 	void testGetSummary_WithQuizUidNotFound() {
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Quiz.class));
 		
 		Assertions.assertThrows(DataNotFoundException.class, () -> quizService.getSummary("quiz-uid"));
 	}

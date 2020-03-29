@@ -17,7 +17,7 @@ public interface QuizRepository extends CrudRepository<Quiz, Long> {
 	Optional<Quiz> findByQuizUid(String quizUid);
 
 	default Quiz findByQuizUidOrException(String quizUid) {
-		return findByQuizUid(quizUid).orElseThrow(() -> new DataNotFoundException("Quiz"));
+		return findByQuizUid(quizUid).orElseThrow(() -> new DataNotFoundException(Quiz.class));
 	}
 
 	@Query(value = "select q.description, q.uid, ac.choice, count(1) from answers a join answer_choices ac on a.id = ac.answer_id join questions q on q.id = ac.question_id where quiz_id = :quizId group by  q.description, q.uid, ac.choice", nativeQuery = true)

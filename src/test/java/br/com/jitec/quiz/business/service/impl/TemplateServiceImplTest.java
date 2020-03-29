@@ -77,7 +77,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testActivateTemplate_WithTemplateUidNotFound() {
 		Mockito.when(templateRepository.findByUidOrException("template-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Template.class));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> templateService.activateTemplate("template-uid"));
 	}
@@ -107,7 +107,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testInactivateTemplate_WithTemplateUidNotFound() {
 		Mockito.when(templateRepository.findByUidOrException("template-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Template.class));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> templateService.inactivateTemplate("template-uid"));
 	}
@@ -136,7 +136,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testGetTemplate_WithTemplateUidNotFound() {
 		Mockito.when(templateRepository.findByUidOrException("unexistent-template-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Template.class));
 
 		Assertions.assertThrows(DataNotFoundException.class,
 				() -> templateService.getTemplate("unexistent-template-uid"));
@@ -173,7 +173,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testUpdateTemplate_WithTemplateUidNotFound() {
 		Mockito.when(templateRepository.findByUidOrException("unexistent-template-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Template.class));
 
 		Assertions.assertThrows(DataNotFoundException.class, () -> {
 			TemplateDto templateDto = new TemplateDto.Builder().withDescription("description-updated").build();
@@ -209,7 +209,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testDeleteTemplate_WithTemplateUidNotFound() {
 		Mockito.when(templateRepository.findByUidOrException("unexistent-template-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Template.class));
 		Assertions.assertThrows(DataNotFoundException.class,
 				() -> templateService.deleteTemplate("unexistent-template-uid"));
 
@@ -247,7 +247,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testSaveQuestion_WithTemplateUidNotFound() {
 		Mockito.when(templateRepository.findByUidOrException("unexistent-template-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Template.class));
 
 		QuestionDto questionDto = new QuestionDto.Builder().withDescription("question-dto").build();
 		Assertions.assertThrows(DataNotFoundException.class,
@@ -294,7 +294,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testUpdateQuestion_WithQuestionUidNotFound() {
 		Mockito.when(questionRepository.findByUidOrException("unexistent-question-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Question.class));
 
 		QuestionDto questionDto = new QuestionDto.Builder().withDescription("question-updated").build();
 		Assertions.assertThrows(DataNotFoundException.class,
@@ -348,7 +348,7 @@ class TemplateServiceImplTest {
 	@Test
 	void testDeleteQuestion_WithQuestionUidNotFound() {
 		Mockito.when(questionRepository.findByUidOrException("unexistent-question-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Question.class));
 
 		Assertions.assertThrows(DataNotFoundException.class,
 				() -> templateService.deleteQuestion("template-uid", "unexistent-question-uid"));

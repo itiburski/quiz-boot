@@ -4,10 +4,10 @@ public class DataNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String MESSAGE = "The %s you were trying to reach was not found";
+	public static final String MESSAGE = "%s was not found";
 
-	public DataNotFoundException(String resource) {
-		super(String.format(MESSAGE, resource));
+	public DataNotFoundException(@SuppressWarnings("rawtypes") Class clazz) {
+		super(String.format(MESSAGE, clazz.getSimpleName()));
 	}
 
 }

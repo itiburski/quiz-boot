@@ -80,7 +80,7 @@ class AnswerServiceImplTest {
 	@Test
 	void testSaveAnswer_WithQuizUidNotFound() {
 		Mockito.when(quizRepository.findByQuizUidOrException("unexistent-uid"))
-				.thenThrow(new DataNotFoundException("-"));
+				.thenThrow(new DataNotFoundException(Quiz.class));
 
 		AnswerDto answerDto = new AnswerDto.Builder().build();
 
