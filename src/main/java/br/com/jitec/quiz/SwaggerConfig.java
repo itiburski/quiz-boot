@@ -30,7 +30,7 @@ public class SwaggerConfig {
 
 	private ApiInfo getApiInfo() {
 		ApiInfo apiInfo = new ApiInfoBuilder().title("Quiz API")
-				.description("This API allows quiz manipulation: templating and answering")
+				.description("API for managing Quiz and Answers")
 				.license("MIT License")
 				.licenseUrl("https://opensource.org/licenses/MIT").version("1.0.0").build();
 
