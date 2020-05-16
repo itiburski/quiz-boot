@@ -1,6 +1,6 @@
 # Quiz API
 
-[![Build Status](https://travis-ci.com/itiburski/quiz-boot.svg?branch=master)](https://travis-ci.com/itiburski/quiz-boot)
+[![Build Status](https://travis-ci.com/itiburski/quiz-boot.svg?branch=master)](https://travis-ci.com/itiburski/quiz-boot) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This is an API for managing Quiz and Answers.
 
