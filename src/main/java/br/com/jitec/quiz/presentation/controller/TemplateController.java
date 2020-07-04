@@ -180,7 +180,7 @@ public class TemplateController {
 
 	@ApiOperation(value = "Deletes a Question with the specified questionUid, that is related to specified templateUid template")
 	@ApiResponses(value = { @ApiResponse(code = 204, message = "Question deleted. No content to return") })
-	@DeleteMapping(path = "/{templateUid}/questions/{questionUid}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(path = "/{templateUid}/questions/{questionUid}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> deleteQuestion(
 			@ApiParam("templateUid for the template which the question will be deleted") @PathVariable String templateUid,
 			@ApiParam("questionUid for the question to be deleted") @PathVariable String questionUid) {
