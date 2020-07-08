@@ -54,6 +54,15 @@ public class TemplateController {
 		return ObjectMapper.mapAll(templates, TemplateResponse.class);
 	}
 
+	@ApiOperation(value = "Gets all active templates")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return all active templates") })
+	@GetMapping(path = "/active", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<TemplateResponse> getActiveTemplates() {
+
+		List<TemplateDto> templates = templateService.getActiveTemplates();
+		return ObjectMapper.mapAll(templates, TemplateResponse.class);
+	}
+
 	@ApiOperation(value = "Creates a new template", code = 201)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Return created template")

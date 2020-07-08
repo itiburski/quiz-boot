@@ -52,6 +52,22 @@ class TemplateServiceImplTest {
 	}
 
 	@Test
+	void testGetActiveTemplates() {
+		List<Template> templates = new ArrayList<>();
+		templates.add(new Template.Builder().withUid("template-uid-1").withStatus(StatusTemplate.ACTIVE).build());
+		templates.add(new Template.Builder().withUid("template-uid-2").withStatus(StatusTemplate.ACTIVE).build());
+
+		Mockito.when(templateRepository.findByStatus(StatusTemplate.ACTIVE)).thenReturn(templates);
+
+		List<TemplateDto> result = templateService.getActiveTemplates();
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertEquals(StatusTemplate.ACTIVE.toString(), result.get(0).getStatus());
+		Assertions.assertEquals(StatusTemplate.ACTIVE.toString(), result.get(1).getStatus());
+	}
+
+	@Test
 	void testSaveTemplate() {
 		Template template = new Template.Builder().withUid("template-uid").build();
 		Mockito.when(templateRepository.save(Mockito.any(Template.class))).thenReturn(template);

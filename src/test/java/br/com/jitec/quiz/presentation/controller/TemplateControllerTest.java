@@ -67,6 +67,30 @@ class TemplateControllerTest {
 	}
 
 	@Test
+	void testGetActiveTemplates() {
+		List<QuestionDto> questionsDto = new ArrayList<>();
+		questionsDto.add(new QuestionDto.Builder().withUid("question-uid-1").build());
+		questionsDto.add(new QuestionDto.Builder().withUid("question-uid-2").build());
+
+		List<TemplateDto> templates = new ArrayList<>();
+		templates.add(new TemplateDto.Builder().withDescription("description1").withUid("uid-1").withStatus("ACTIVE")
+				.withQuestions(questionsDto).build());
+		templates.add(new TemplateDto.Builder().withDescription("description2").withUid("uid-2").withStatus("ACTIVE").build());
+		Mockito.when(templateService.getActiveTemplates()).thenReturn(templates);
+
+		List<TemplateResponse> result = templateController.getActiveTemplates();
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertEquals("uid-1", result.get(0).getTemplateUid());
+		Assertions.assertEquals("description1", result.get(0).getDescription());
+		Assertions.assertEquals("ACTIVE", result.get(0).getStatus());
+		Assertions.assertEquals("uid-2", result.get(1).getTemplateUid());
+		Assertions.assertEquals("description2", result.get(1).getDescription());
+		Assertions.assertEquals("ACTIVE", result.get(1).getStatus());
+	}
+
+	@Test
 	void testPostTemplate() {
 		TemplateDto savedTemplate = new TemplateDto.Builder().withDescription("description").withUid("template-uid")
 				.build();

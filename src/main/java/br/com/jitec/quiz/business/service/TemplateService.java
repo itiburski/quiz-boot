@@ -9,6 +9,8 @@ public interface TemplateService {
 
 	List<TemplateDto> getTemplates();
 
+	List<TemplateDto> getActiveTemplates();
+
 	TemplateDto saveTemplate(TemplateDto templateDto);
 
 	TemplateDto getTemplate(String uid);

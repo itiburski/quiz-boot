@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import br.com.jitec.quiz.business.exception.DataNotFoundException;
+import br.com.jitec.quiz.data.entity.StatusTemplate;
 import br.com.jitec.quiz.data.entity.Template;
 
 @Repository
@@ -22,4 +23,7 @@ public interface TemplateRepository extends CrudRepository<Template, Long> {
 	@Query("select t from Template t where t.uid = :templateUid and t.status = 1")
 	Optional<Template> findActiveByUid(@Param("templateUid") String templateUid);
 	
+	@Query("select t from Template t where t.status = :status")
+	Iterable<Template> findByStatus(@Param("status") StatusTemplate status);
+
 }

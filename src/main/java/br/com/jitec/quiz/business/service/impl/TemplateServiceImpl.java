@@ -35,6 +35,15 @@ public class TemplateServiceImpl implements TemplateService {
 	}
 
 	@Override
+	public List<TemplateDto> getActiveTemplates() {
+		Iterable<Template> templates = (Iterable<Template>) templateRepository
+				.findByStatus(StatusTemplate.ACTIVE);
+
+		List<TemplateDto> map = ObjectMapper.mapAll(templates, TemplateDto.class);
+		return map;
+	}
+
+	@Override
 	public TemplateDto saveTemplate(TemplateDto templateDto) {
 		Template template = ObjectMapper.map(templateDto, Template.class);
 		template.setUid(UUID.randomUUID().toString());
