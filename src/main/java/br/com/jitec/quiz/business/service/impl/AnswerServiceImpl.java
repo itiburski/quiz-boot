@@ -1,6 +1,6 @@
 package br.com.jitec.quiz.business.service.impl;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class AnswerServiceImpl implements AnswerService {
 		checkQuizAcceptAnswers(quiz);
 		
 		Answer answer = new Answer();
-		answer.setDate(LocalDateTime.now());
+		answer.setDate(ZonedDateTime.now());
 		answer.setQuiz(quiz);
 		answer.setAnswerChoices(new ArrayList<>());
 		
@@ -71,7 +71,7 @@ public class AnswerServiceImpl implements AnswerService {
 
 	private void checkQuizAcceptAnswers(Quiz quiz) {
 		boolean quizActive = StatusQuiz.ACTIVE.equals(quiz.getStatus());
-		LocalDateTime now = LocalDateTime.now();
+		ZonedDateTime now = ZonedDateTime.now();
 		boolean quizOnTime = now.isAfter(quiz.getBegin()) && now.isBefore(quiz.getEnd());
 		if (!quizActive || !quizOnTime) {
 			throw new BusinessValidationException(

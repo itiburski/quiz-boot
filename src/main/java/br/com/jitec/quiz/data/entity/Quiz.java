@@ -1,6 +1,6 @@
 package br.com.jitec.quiz.data.entity;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -29,10 +29,10 @@ public class Quiz {
 	private String description;
 
 	@Column(name = "dt_begin")
-	private LocalDateTime begin;
+	private ZonedDateTime begin;
 
 	@Column(name = "dt_end")
-	private LocalDateTime end;
+	private ZonedDateTime end;
 
 	private StatusQuiz status;
 
@@ -67,19 +67,19 @@ public class Quiz {
 		this.description = description;
 	}
 
-	public LocalDateTime getBegin() {
+	public ZonedDateTime getBegin() {
 		return begin;
 	}
 
-	public void setBegin(LocalDateTime begin) {
+	public void setBegin(ZonedDateTime begin) {
 		this.begin = begin;
 	}
 
-	public LocalDateTime getEnd() {
+	public ZonedDateTime getEnd() {
 		return end;
 	}
 
-	public void setEnd(LocalDateTime end) {
+	public void setEnd(ZonedDateTime end) {
 		this.end = end;
 	}
 
@@ -129,12 +129,12 @@ public class Quiz {
 			return this;
 		}
 
-		public Builder withBegin(LocalDateTime begin) {
+		public Builder withBegin(ZonedDateTime begin) {
 			instance.setBegin(begin);
 			return this;
 		}
 
-		public Builder withEnd(LocalDateTime end) {
+		public Builder withEnd(ZonedDateTime end) {
 			instance.setEnd(end);
 			return this;
 		}

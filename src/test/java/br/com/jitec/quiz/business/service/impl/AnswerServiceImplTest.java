@@ -1,6 +1,6 @@
 package br.com.jitec.quiz.business.service.impl;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,15 +38,15 @@ class AnswerServiceImplTest {
 	@Mock
 	private AnswerRepository answerRepository;
 
-	private LocalDateTime dtYesterday;
-	private LocalDateTime dtTomorrow;
+	private ZonedDateTime dtYesterday;
+	private ZonedDateTime dtTomorrow;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 
-		dtYesterday = LocalDateTime.now().minusDays(1);
-		dtTomorrow = LocalDateTime.now().plusDays(1);
+		dtYesterday = ZonedDateTime.now().minusDays(1);
+		dtTomorrow = ZonedDateTime.now().plusDays(1);
 	}
 
 	@Test
@@ -55,7 +55,7 @@ class AnswerServiceImplTest {
 				.withEnd(dtTomorrow).build();
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
-		Answer answer = new Answer.Builder().withId(2L).withQuiz(quiz).withDate(LocalDateTime.now())
+		Answer answer = new Answer.Builder().withId(2L).withQuiz(quiz).withDate(ZonedDateTime.now())
 				.withAnswerChoices(new ArrayList<>()).build();
 		Mockito.when(answerRepository.save(Mockito.any(Answer.class))).thenReturn(answer);
 
@@ -124,7 +124,7 @@ class AnswerServiceImplTest {
 				.withEnd(dtTomorrow).build();
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 
-		Answer answer = new Answer.Builder().withId(2L).withQuiz(quiz).withDate(LocalDateTime.now())
+		Answer answer = new Answer.Builder().withId(2L).withQuiz(quiz).withDate(ZonedDateTime.now())
 				.withAnswerChoices(new ArrayList<>()).build();
 		Mockito.when(answerRepository.save(Mockito.any(Answer.class))).thenReturn(answer);
 

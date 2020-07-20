@@ -1,13 +1,13 @@
 package br.com.jitec.quiz.presentation.payload;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class QuizResponse {
 
 	private String quizUid;
 	private String description;
-	private LocalDateTime begin;
-	private LocalDateTime end;
+	private ZonedDateTime begin;
+	private ZonedDateTime end;
 	private String status;
 
 // 	Maybe return TemplateResponse, but without Question list
@@ -28,19 +28,19 @@ public class QuizResponse {
 		this.description = description;
 	}
 
-	public LocalDateTime getBegin() {
+	public ZonedDateTime getBegin() {
 		return begin;
 	}
 
-	public void setBegin(LocalDateTime begin) {
+	public void setBegin(ZonedDateTime begin) {
 		this.begin = begin;
 	}
 
-	public LocalDateTime getEnd() {
+	public ZonedDateTime getEnd() {
 		return end;
 	}
 
-	public void setEnd(LocalDateTime end) {
+	public void setEnd(ZonedDateTime end) {
 		this.end = end;
 	}
 

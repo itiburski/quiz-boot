@@ -1,8 +1,9 @@
 package br.com.jitec.quiz.business.service.impl;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,15 +41,15 @@ class QuizServiceImplTest {
 	@Mock
 	private TemplateRepository templateRepository;
 
-	private LocalDateTime dtBegin;
-	private LocalDateTime dtEnd;
+	private ZonedDateTime dtBegin;
+	private ZonedDateTime dtEnd;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 
-		dtBegin = LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0);
-		dtEnd = LocalDateTime.of(2020, Month.FEBRUARY, 5, 23, 59);
+		dtBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 31, 0, 0, 0, 0, ZoneId.systemDefault());
+		dtEnd = ZonedDateTime.of(2020, Month.FEBRUARY.getValue(), 5, 23, 59, 59, 999, ZoneId.systemDefault());
 	}
 
 	@Test
@@ -230,8 +231,10 @@ class QuizServiceImplTest {
 		Mockito.when(quizRepository.findByQuizUidOrException("quiz-uid")).thenReturn(quiz);
 		Mockito.when(quizRepository.save(Mockito.any(Quiz.class))).thenReturn(quiz);
 
-		LocalDateTime newBegin = LocalDateTime.of(2020, Month.JANUARY, 01, 0, 0);
-		LocalDateTime newEnd = LocalDateTime.of(2020, Month.FEBRUARY, 6, 23, 59);
+		ZonedDateTime newBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 01, 0, 0, 0, 0,
+				ZoneId.systemDefault());
+		ZonedDateTime newEnd = ZonedDateTime.of(2020, Month.FEBRUARY.getValue(), 6, 23, 59, 59, 999,
+				ZoneId.systemDefault());
 		QuizDto quizDto = new QuizDto.Builder().withDescription("updated-description").withBegin(newBegin)
 				.withEnd(newEnd).build();
 		QuizDto result = quizService.updateQuiz("quiz-uid", quizDto);

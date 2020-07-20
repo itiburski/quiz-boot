@@ -1,7 +1,8 @@
 package br.com.jitec.quiz.presentation.controller;
 
-import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -162,8 +163,10 @@ class TemplateControllerTest {
 
 	@Test
 	void testPostQuiz() {
-		LocalDateTime dtBegin = LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0);
-		LocalDateTime dtEnd = LocalDateTime.of(2020, Month.FEBRUARY, 4, 23, 59, 59);
+		ZonedDateTime dtBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 31, 0, 0, 0, 0,
+				ZoneId.systemDefault());
+		ZonedDateTime dtEnd = ZonedDateTime.of(2020, Month.FEBRUARY.getValue(), 4, 23, 59, 59, 999,
+				ZoneId.systemDefault());
 		QuizDto quizDtoMock = new QuizDto.Builder().withDescription("description").withQuizUid("quiz-uid")
 				.withBegin(dtBegin).withEnd(dtEnd).withStatus("PENDING").build();
 		Mockito.when(quizService.saveQuiz(Mockito.eq("template-uid"), Mockito.any(QuizDto.class)))

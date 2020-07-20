@@ -1,6 +1,6 @@
 package br.com.jitec.quiz.data.entity;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -30,7 +30,7 @@ public class Answer {
 	private List<AnswerChoice> answerChoices;
 
 	@Column(name = "dt_answer")
-	private LocalDateTime date;
+	private ZonedDateTime date;
 
 	public Long getId() {
 		return id;
@@ -48,11 +48,11 @@ public class Answer {
 		this.quiz = quiz;
 	}
 
-	public LocalDateTime getDate() {
+	public ZonedDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDateTime date) {
+	public void setDate(ZonedDateTime date) {
 		this.date = date;
 	}
 
@@ -86,7 +86,7 @@ public class Answer {
 			return this;
 		}
 
-		public Builder withDate(LocalDateTime date) {
+		public Builder withDate(ZonedDateTime date) {
 			instance.setDate(date);
 			return this;
 		}

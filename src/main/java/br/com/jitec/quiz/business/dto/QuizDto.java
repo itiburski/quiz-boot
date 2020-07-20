@@ -1,13 +1,13 @@
 package br.com.jitec.quiz.business.dto;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class QuizDto {
 
 	private String quizUid;
 	private String description;
-	private LocalDateTime begin;
-	private LocalDateTime end;
+	private ZonedDateTime begin;
+	private ZonedDateTime end;
 	private String status;
 
 	public String getQuizUid() {
@@ -26,19 +26,19 @@ public class QuizDto {
 		this.description = description;
 	}
 
-	public LocalDateTime getBegin() {
+	public ZonedDateTime getBegin() {
 		return begin;
 	}
 
-	public void setBegin(LocalDateTime begin) {
+	public void setBegin(ZonedDateTime begin) {
 		this.begin = begin;
 	}
 
-	public LocalDateTime getEnd() {
+	public ZonedDateTime getEnd() {
 		return end;
 	}
 
-	public void setEnd(LocalDateTime end) {
+	public void setEnd(ZonedDateTime end) {
 		this.end = end;
 	}
 
@@ -48,6 +48,12 @@ public class QuizDto {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "QuizDto [quizUid=" + quizUid + ", description=" + description + ", begin=" + begin + ", end=" + end
+				+ ", status=" + status + "]";
 	}
 
 	public static class Builder {
@@ -67,12 +73,12 @@ public class QuizDto {
 			return this;
 		}
 
-		public Builder withBegin(LocalDateTime begin) {
+		public Builder withBegin(ZonedDateTime begin) {
 			instance.setBegin(begin);
 			return this;
 		}
 
-		public Builder withEnd(LocalDateTime end) {
+		public Builder withEnd(ZonedDateTime end) {
 			instance.setEnd(end);
 			return this;
 		}

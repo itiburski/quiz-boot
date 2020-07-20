@@ -1,7 +1,8 @@
 package br.com.jitec.quiz.presentation.controller;
 
-import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,10 @@ class QuizControllerTest {
 	@Test
 	void testGetQuizzes() {
 		List<QuizDto> quizzesMock = new ArrayList<>();
-		LocalDateTime dtBegin = LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0);
-		LocalDateTime dtEnd = LocalDateTime.of(2020, Month.FEBRUARY, 5, 23, 59);
+		ZonedDateTime dtBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 31, 0, 0, 0, 0,
+				ZoneId.systemDefault());
+		ZonedDateTime dtEnd = ZonedDateTime.of(2020, Month.FEBRUARY.getValue(), 5, 23, 59, 59, 999,
+				ZoneId.systemDefault());
 		quizzesMock.add(new QuizDto.Builder().withQuizUid("quiz-uid-1").withDescription("desc-1").withBegin(dtBegin)
 				.withEnd(dtEnd).withStatus("PENDING").build());
 		quizzesMock.add(new QuizDto.Builder().withQuizUid("quiz-uid-2").withDescription("desc-2").withBegin(dtBegin)
@@ -67,8 +70,10 @@ class QuizControllerTest {
 
 	@Test
 	void testGetQuiz() {
-		LocalDateTime dtBegin = LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0);
-		LocalDateTime dtEnd = LocalDateTime.of(2020, Month.FEBRUARY, 5, 23, 59);
+		ZonedDateTime dtBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 31, 0, 0, 0, 0,
+				ZoneId.systemDefault());
+		ZonedDateTime dtEnd = ZonedDateTime.of(2020, Month.FEBRUARY.getValue(), 5, 23, 59, 59, 999,
+				ZoneId.systemDefault());
 		QuizDto quizDtoMock = new QuizDto.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withBegin(dtBegin).withEnd(dtEnd).withStatus("PENDING").build();
 		Mockito.when(quizService.getQuiz("quiz-uid")).thenReturn(quizDtoMock);
@@ -86,8 +91,10 @@ class QuizControllerTest {
 
 	@Test
 	void testGetQuizComplete() {
-		LocalDateTime dtBegin = LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0);
-		LocalDateTime dtEnd = LocalDateTime.of(2020, Month.FEBRUARY, 5, 23, 59);
+		ZonedDateTime dtBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 31, 0, 0, 0, 0,
+				ZoneId.systemDefault());
+		ZonedDateTime dtEnd = ZonedDateTime.of(2020, Month.FEBRUARY.getValue(), 5, 23, 59, 59, 999,
+				ZoneId.systemDefault());
 		QuizCompleteDto quizDtoMock = new QuizCompleteDto.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withBegin(dtBegin).withEnd(dtEnd).withStatus("PENDING").build();
 		Mockito.when(quizService.getQuizComplete("quiz-uid")).thenReturn(quizDtoMock);
@@ -105,8 +112,10 @@ class QuizControllerTest {
 
 	@Test
 	void testPutQuiz() {
-		LocalDateTime dtBegin = LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0);
-		LocalDateTime dtEnd = LocalDateTime.of(2020, Month.FEBRUARY, 5, 23, 59);
+		ZonedDateTime dtBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 31, 0, 0, 0, 0,
+				ZoneId.systemDefault());
+		ZonedDateTime dtEnd = ZonedDateTime.of(2020, Month.FEBRUARY.getValue(), 5, 23, 59, 59, 999,
+				ZoneId.systemDefault());
 		QuizDto quizDtoMock = new QuizDto.Builder().withQuizUid("quiz-uid").withDescription("description")
 				.withBegin(dtBegin).withEnd(dtEnd).withStatus("PENDING").build();
 		Mockito.when(quizService.updateQuiz(Mockito.eq("quiz-uid"), Mockito.any(QuizDto.class)))
