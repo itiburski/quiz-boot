@@ -57,7 +57,7 @@ public class QuizController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Gets a Quiz with the specified quizUid, including the answers and the possible choices")
+	@ApiOperation(value = "Gets a Quiz with the specified quizUid, including the questions and the possible choices")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return the Quiz with the specified quizUid") })
 	@GetMapping(path = "/{quizUid}/complete", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<QuizCompleteResponse> getQuizComplete(@PathVariable String quizUid) {
