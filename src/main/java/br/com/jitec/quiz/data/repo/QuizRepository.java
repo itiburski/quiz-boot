@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.jitec.quiz.business.exception.DataNotFoundException;
 import br.com.jitec.quiz.data.entity.Quiz;
+import br.com.jitec.quiz.data.entity.StatusQuiz;
 
 @Repository
 public interface QuizRepository extends CrudRepository<Quiz, Long> {
@@ -22,5 +23,8 @@ public interface QuizRepository extends CrudRepository<Quiz, Long> {
 
 	@Query(value = "select q.description, q.uid, ac.choice, count(1) from answers a join answer_choices ac on a.id = ac.answer_id join questions q on q.id = ac.question_id where quiz_id = :quizId group by  q.description, q.uid, ac.choice", nativeQuery = true)
 	List<Object[]> findAnswersByQuizId(@Param("quizId") Long quizId);
+
+	@Query("select q from Quiz q where q.status = :status")
+	Iterable<Quiz> findByStatus(@Param("status") StatusQuiz status);
 
 }

@@ -69,6 +69,36 @@ class QuizControllerTest {
 	}
 
 	@Test
+	void testGetActiveQuizzes() {
+		List<QuizDto> quizzesMock = new ArrayList<>();
+		ZonedDateTime dtBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 31, 0, 0, 0, 0,
+				ZoneId.systemDefault());
+		ZonedDateTime dtEnd = ZonedDateTime.of(2020, Month.FEBRUARY.getValue(), 5, 23, 59, 59, 999,
+				ZoneId.systemDefault());
+		quizzesMock.add(new QuizDto.Builder().withQuizUid("quiz-uid-1").withDescription("desc-1").withBegin(dtBegin)
+				.withEnd(dtEnd).withStatus("ACTIVE").build());
+		quizzesMock.add(new QuizDto.Builder().withQuizUid("quiz-uid-2").withDescription("desc-2").withBegin(dtBegin)
+				.withEnd(dtEnd).withStatus("ACTIVE").build());
+
+		Mockito.when(quizService.getActiveQuizzes()).thenReturn(quizzesMock);
+
+		List<QuizResponse> result = quizController.getActiveQuizzes();
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertEquals("quiz-uid-1", result.get(0).getQuizUid());
+		Assertions.assertEquals("desc-1", result.get(0).getDescription());
+		Assertions.assertEquals(dtBegin, result.get(0).getBegin());
+		Assertions.assertEquals(dtEnd, result.get(0).getEnd());
+		Assertions.assertEquals("ACTIVE", result.get(0).getStatus());
+		Assertions.assertEquals("quiz-uid-2", result.get(1).getQuizUid());
+		Assertions.assertEquals("desc-2", result.get(1).getDescription());
+		Assertions.assertEquals(dtBegin, result.get(1).getBegin());
+		Assertions.assertEquals(dtEnd, result.get(1).getEnd());
+		Assertions.assertEquals("ACTIVE", result.get(1).getStatus());
+	}
+
+	@Test
 	void testGetQuiz() {
 		ZonedDateTime dtBegin = ZonedDateTime.of(2020, Month.JANUARY.getValue(), 31, 0, 0, 0, 0,
 				ZoneId.systemDefault());

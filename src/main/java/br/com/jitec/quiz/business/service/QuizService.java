@@ -10,6 +10,8 @@ public interface QuizService {
 
 	List<QuizDto> getQuizzes();
 
+	List<QuizDto> getActiveQuizzes();
+
 	QuizDto saveQuiz(String templateUid, QuizDto quizDto);
 
 	QuizDto startQuiz(String quizUid);

@@ -46,6 +46,15 @@ public class QuizController {
 		return ObjectMapper.mapAll(quizzes, QuizResponse.class);
 	}
 
+	@ApiOperation(value = "Get active quizzes")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return active quizzes") })
+	@GetMapping(path = "/active", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<QuizResponse> getActiveQuizzes() {
+		List<QuizDto> quizzes = quizService.getActiveQuizzes();
+
+		return ObjectMapper.mapAll(quizzes, QuizResponse.class);
+	}
+
 	@ApiOperation(value = "Gets a Quiz with the specified quizUid")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Return the Quiz with the specified quizUid") })
 	@GetMapping(path = "/{quizUid}", produces = MediaType.APPLICATION_JSON_VALUE)

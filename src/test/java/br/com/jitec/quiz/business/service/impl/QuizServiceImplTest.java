@@ -80,6 +80,33 @@ class QuizServiceImplTest {
 	}
 
 	@Test
+	void testGetActiveQuizzes() {
+		List<Quiz> quizzes = new ArrayList<>();
+		quizzes.add(new Quiz.Builder().withDescription("desc-1").withQuizUid("quiz-uid-1").withBegin(dtBegin)
+				.withEnd(dtEnd).withStatus(StatusQuiz.ACTIVE).build());
+		quizzes.add(new Quiz.Builder().withDescription("desc-2").withQuizUid("quiz-uid-2").withBegin(dtBegin)
+				.withEnd(dtEnd).withStatus(StatusQuiz.ACTIVE).build());
+		Mockito.when(quizRepository.findByStatus(StatusQuiz.ACTIVE)).thenReturn(quizzes);
+
+		List<QuizDto> result = quizService.getActiveQuizzes();
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(2, result.size());
+
+		Assertions.assertEquals("desc-1", result.get(0).getDescription());
+		Assertions.assertEquals("quiz-uid-1", result.get(0).getQuizUid());
+		Assertions.assertEquals(StatusQuiz.ACTIVE.toString(), result.get(0).getStatus());
+		Assertions.assertEquals(dtBegin, result.get(0).getBegin());
+		Assertions.assertEquals(dtEnd, result.get(0).getEnd());
+
+		Assertions.assertEquals("desc-2", result.get(1).getDescription());
+		Assertions.assertEquals("quiz-uid-2", result.get(1).getQuizUid());
+		Assertions.assertEquals(StatusQuiz.ACTIVE.toString(), result.get(1).getStatus());
+		Assertions.assertEquals(dtBegin, result.get(1).getBegin());
+		Assertions.assertEquals(dtEnd, result.get(1).getEnd());
+	}
+
+	@Test
 	void testSaveQuiz() {
 		Template template = new Template.Builder().withUid("template-uid").withStatus(StatusTemplate.ACTIVE).build();
 		Mockito.when(templateRepository.findActiveByUid("template-uid")).thenReturn(Optional.of(template));

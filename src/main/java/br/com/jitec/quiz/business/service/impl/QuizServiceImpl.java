@@ -45,6 +45,14 @@ public class QuizServiceImpl implements QuizService {
 	}
 
 	@Override
+	public List<QuizDto> getActiveQuizzes() {
+		Iterable<Quiz> quizzes = quizRepository.findByStatus(StatusQuiz.ACTIVE);
+
+		List<QuizDto> returnQuizzes = ObjectMapper.mapAll(quizzes, QuizDto.class);
+		return returnQuizzes;
+	}
+
+	@Override
 	public QuizDto saveQuiz(String templateUid, QuizDto quizDto) {
 		Template template = templateRepository.findActiveByUid(templateUid).orElseThrow(
 				() -> new BusinessValidationException(

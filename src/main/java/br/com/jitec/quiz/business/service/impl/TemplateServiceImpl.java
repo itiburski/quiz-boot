@@ -36,8 +36,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public List<TemplateDto> getActiveTemplates() {
-		Iterable<Template> templates = (Iterable<Template>) templateRepository
-				.findByStatus(StatusTemplate.ACTIVE);
+		Iterable<Template> templates = templateRepository.findByStatus(StatusTemplate.ACTIVE);
 
 		List<TemplateDto> map = ObjectMapper.mapAll(templates, TemplateDto.class);
 		return map;
