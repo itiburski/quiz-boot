@@ -18,5 +18,11 @@ $ git clone https://github.com/itiburski/quiz-boot.git
 ```
 
 + Open project in your favorite editor and change application.properties file to point to your PostgreSQL database
-+ Build Spring project 
++ Build Spring project
+
+```sh
+mvn clean package
+java -jar target/quiz-boot-0.0.1-SNAPSHOT.jar
+```
+
 + Open http://localhost:8080/quiz/swagger-ui.html to see endpoints.
